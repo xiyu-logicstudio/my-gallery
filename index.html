@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIC STUDIO</title>
+    <title>LOGIC STUDIO | 个人主页与影像档案</title>
     <meta name="description" content="LOGIC STUDIO - 思绪切片与定格瞬间。">
     <!-- Google Fonts 现代化字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- GSAP 动画库 -->
+    <!-- GSAP 动画与滚动插件 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     <!-- 核心数据源 -->
@@ -61,6 +61,59 @@
         ::-webkit-scrollbar-thumb { background: #282a35; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #3e4252; }
 
+        /* 顶部悬浮毛玻璃导航条 */
+        #top-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 10px 24px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #top-nav.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .nav-logo {
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-size: 0.88rem;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.25s ease;
+            cursor: pointer;
+        }
+        .nav-links a:hover {
+            color: #fff;
+        }
+
         /* 1. 开屏区 (Hero) */
         #hero {
             height: 100vh;
@@ -72,7 +125,6 @@
             position: relative;
             padding: 0 20px;
             user-select: none;
-            transition: opacity 0.35s ease;
         }
         .hero-title-wrap {
             opacity: 0;
@@ -80,15 +132,24 @@
             animation: heroFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
         .hero-title {
-            font-size: clamp(2.8rem, 7.5vw, 6rem);
+            font-size: clamp(3rem, 8vw, 6.5rem);
             font-weight: 800;
-            letter-spacing: 0.28em;
-            margin-right: -0.28em;
+            letter-spacing: 0.25em;
+            margin-right: -0.25em;
             background: linear-gradient(180deg, #ffffff 30%, #8e92a0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             line-height: 1.1;
+        }
+        .hero-tagline {
+            font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+            letter-spacing: 0.4em;
+            margin-right: -0.4em;
+            color: var(--text-muted);
+            margin-top: 24px;
+            text-transform: uppercase;
+            font-weight: 500;
         }
         @keyframes heroFadeIn {
             to {
@@ -122,189 +183,59 @@
             50% { transform: translateY(8px); }
         }
 
-        /* 2. 主入口菜单 (Portal Menu) */
-        #portal-section {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px 80px;
-            max-width: 1100px;
-            margin: 0 auto;
-            transition: opacity 0.35s ease;
-        }
-        .portal-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
-            width: 100%;
-        }
-        @media (max-width: 768px) {
-            .portal-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-        .portal-card {
-            background: linear-gradient(145deg, var(--bg-surface) 0%, #151720 100%);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 48px 36px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 320px;
-            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        .portal-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .portal-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--border-hover);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-        }
-        .portal-card:hover::after {
-            opacity: 1;
-        }
-        .portal-tag {
-            font-size: 0.72rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        .portal-card:nth-child(2) .portal-tag {
-            color: var(--accent-gold);
-        }
-        .portal-title {
-            font-size: clamp(1.8rem, 3vw, 2.3rem);
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-        .portal-desc {
-            font-size: 0.92rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-        .portal-action {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #fff;
-            transition: gap 0.3s;
-        }
-        .portal-card:hover .portal-action {
-            gap: 16px;
-            color: var(--accent-blue);
-        }
-        .portal-card:nth-child(2):hover .portal-action {
-            color: var(--accent-gold);
-        }
-        .portal-action svg {
-            width: 16px;
-            height: 16px;
-            stroke-width: 2.5;
-            transition: transform 0.3s;
-        }
-        .portal-card:hover .portal-action svg {
-            transform: translateX(4px);
-        }
-
-        /* 3. 板块内容容器 (Content Panels) */
-        .content-panel {
-            display: none;
-            opacity: 0;
-            min-height: 100vh;
+        /* 页面主体容器 */
+        .main-container {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 80px 24px 100px;
-            position: relative;
-            transition: opacity 0.4s ease;
-        }
-        .content-panel.active {
-            display: block;
-            opacity: 1;
-        }
-        .panel-back-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 40px;
-        }
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 30px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            user-select: none;
-        }
-        .back-btn:hover {
-            color: #fff;
-            border-color: var(--border-hover);
-            background: #1c1e26;
-            transform: translateX(-3px);
-        }
-        .back-btn svg {
-            width: 16px;
-            height: 16px;
-            stroke-width: 2;
+            padding: 40px 24px 100px;
         }
 
-        .panel-header {
-            margin-bottom: 48px;
+        /* 板块通用头部 */
+        .section-header {
+            margin-bottom: 44px;
+            position: relative;
         }
-        .panel-badge {
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             font-size: 0.72rem;
-            letter-spacing: 3px;
             text-transform: uppercase;
+            letter-spacing: 3px;
             color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding: 3px 10px;
+            background: rgba(74, 158, 255, 0.08);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 20px;
         }
-        .panel-title {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            font-weight: 800;
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
             letter-spacing: 2px;
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-        .panel-desc {
-            font-size: 0.95rem;
+        .section-desc {
+            font-size: 0.92rem;
             color: var(--text-secondary);
             max-width: 650px;
             line-height: 1.7;
         }
 
-        /* 3.1 思绪切片 (Articles Grid) */
+        /* 板块分隔间距 */
+        .module-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .module-section:first-of-type {
+            border-top: none;
+        }
+
+        /* ========================================================
+           2. 公众号文章板块：思绪切片 (Mind Slices)
+           ======================================================== */
         .articles-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -390,7 +321,10 @@
             stroke-width: 2;
         }
 
-        /* 3.2 极简摄影器材 (Minimalist Gear) */
+        /* ========================================================
+           3. 摄影板块：定格瞬间 (Captured Moments)
+           ======================================================== */
+        /* 纯英文极简器材 (Minimalist Equipment) */
         .gear-section {
             margin-bottom: 60px;
         }
@@ -410,9 +344,9 @@
             border-color: var(--border-hover);
         }
         .gear-header {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
         .gear-badge {
             font-size: 0.65rem;
@@ -424,7 +358,7 @@
             margin-bottom: 4px;
         }
         .gear-model {
-            font-size: 1.2rem;
+            font-size: 1.18rem;
             font-weight: 700;
             color: #fff;
             letter-spacing: 0.5px;
@@ -451,12 +385,12 @@
             text-transform: uppercase;
         }
         .lens-name {
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             font-weight: 500;
             color: #ececec;
         }
 
-        /* 3.3 摄影画廊 (Gallery) */
+        /* 摄影画廊 (Gallery) */
         .gallery-header-row {
             display: flex;
             align-items: center;
@@ -480,13 +414,14 @@
             }
         }
         .photo-card {
-            background: var(--bg-surface);
+            background: #14161c;
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
             overflow: hidden;
             position: relative;
             cursor: pointer;
             aspect-ratio: 4 / 3;
+            min-height: 200px;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
         }
         .photo-card:hover {
@@ -499,7 +434,6 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            background: #191b22;
             display: block;
         }
         .photo-card:hover .photo-thumb {
@@ -565,7 +499,9 @@
             stroke: #fff;
         }
 
-        /* 4. 沉浸式 Lightbox 放大弹窗 */
+        /* ========================================================
+           4. 沉浸式 Lightbox 放大弹窗
+           ======================================================== */
         #lightbox {
             position: fixed;
             inset: 0;
@@ -604,6 +540,7 @@
         }
         .lb-img-wrap {
             flex: 1;
+            width: 100%;
             height: 100%;
             max-height: 86vh;
             display: flex;
@@ -614,13 +551,10 @@
         }
         .lb-img {
             max-width: 100%;
-            max-height: 100%;
+            max-height: 85vh;
             object-fit: contain;
             border-radius: var(--radius-sm);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-            transform: scale(1);
-            transition: transform 0.3s ease;
-            opacity: 1;
             display: block;
         }
         .lb-exif-card {
@@ -741,12 +675,13 @@
         .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
         .lb-next:hover { transform: translateY(-50%) scale(1.08); }
 
-        /* 5. 极简页脚与纯图标点赞/踩 */
+        /* ========================================================
+           5. 极简页脚与纯图标点赞/踩
+           ======================================================== */
         #master-footer {
             padding: 70px 24px 40px;
             border-top: 1px solid var(--border-subtle);
             text-align: center;
-            transition: opacity 0.35s ease;
         }
         .pure-vote-row {
             display: flex;
@@ -794,96 +729,119 @@
             font-size: 0.78rem;
             letter-spacing: 2px;
         }
+
+        /* 返回顶部悬浮按钮 */
+        #back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s, background 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        #back-to-top:hover {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        #back-to-top svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+        }
     </style>
 </head>
 <body>
+
+    <!-- 顶部悬浮导航 -->
+    <nav id="top-nav">
+        <a class="nav-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">LOGIC STUDIO</a>
+        <ul class="nav-links">
+            <li><a onclick="scrollToSection('section-articles')">思绪切片</a></li>
+            <li><a onclick="scrollToSection('section-moments')">定格瞬间</a></li>
+            <li><a onclick="scrollToSection('section-gear')">器材</a></li>
+            <li><a onclick="scrollToSection('master-footer')">互动</a></li>
+        </ul>
+    </nav>
 
     <!-- 1. 开屏区 (Hero) -->
     <section id="hero">
         <div class="hero-title-wrap">
             <h1 class="hero-title">LOGIC STUDIO</h1>
+            <p class="hero-tagline">Visuals & Perspectives</p>
         </div>
-        <div class="scroll-indicator" onclick="scrollToPortal()">
+        <div class="scroll-indicator" onclick="scrollToSection('section-articles')">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
             </svg>
         </div>
     </section>
 
-    <!-- 2. 主入口菜单 (Portal Cards) -->
-    <div id="portal-section">
-        <div class="portal-grid">
-            <!-- 思绪切片入口 -->
-            <div class="portal-card" onclick="openPanel('articles-panel')">
-                <div>
-                    <div class="portal-tag">ESSAYS · 公众号随笔</div>
-                    <h2 class="portal-title">思绪切片</h2>
-                    <p class="portal-desc">沉淀思维脉络，收录精选公众号深度文章与思考。</p>
+    <!-- 页面核心内容容器 -->
+    <main class="main-container">
+
+        <!-- 2. 公众号文章板块：思绪切片 (Mind Slices) -->
+        <section id="section-articles" class="module-section">
+            <div class="section-header">
+                <div class="section-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    ESSAYS & DIALOGUES
                 </div>
-                <div class="portal-action">
-                    <span>ENTER / 进入板块</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
+                <h2 class="section-title">思绪切片</h2>
+                <p class="section-desc">文字沉淀思考。点击卡片直接在新标签页打开微信公众号阅读原文。</p>
             </div>
 
-            <!-- 定格瞬间入口 -->
-            <div class="portal-card" onclick="openPanel('moments-panel')">
-                <div>
-                    <div class="portal-tag">PHOTOGRAPHY · 摄影档案</div>
-                    <h2 class="portal-title">定格瞬间</h2>
-                    <p class="portal-desc">快门锁住光影，浏览作品画廊与拍摄器材参数。</p>
+            <div class="articles-grid" id="articles-container"></div>
+        </section>
+
+        <!-- 3. 摄影板块：定格瞬间 (Captured Moments) -->
+        <section id="section-moments" class="module-section">
+            <div class="section-header">
+                <div class="section-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    FRAMED MOMENTS
                 </div>
-                <div class="portal-action">
-                    <span>ENTER / 进入板块</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
+                <h2 class="section-title">定格瞬间</h2>
+                <p class="section-desc">点击任意照片即可无损放大，并查看完整 EXIF 拍摄参数仪表盘。</p>
             </div>
-        </div>
-    </div>
 
-    <!-- 3. 思绪切片内容面板 (Articles Panel) -->
-    <div id="articles-panel" class="content-panel">
-        <div class="panel-back-bar">
-            <div class="back-btn" onclick="closePanel()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span>返回主页</span>
+            <!-- 极简器材展示 (Minimalist Gear) -->
+            <div id="section-gear" class="gear-section">
+                <div class="gear-grid" id="gear-container"></div>
             </div>
-        </div>
-        <div class="panel-header">
-            <div class="panel-badge">ESSAYS & DIALOGUES</div>
-            <h2 class="panel-title">思绪切片</h2>
-            <p class="panel-desc">文字沉淀思考。点击卡片直接在新标签页打开微信公众号阅读原文。</p>
-        </div>
-        <div class="articles-grid" id="articles-container"></div>
-    </div>
 
-    <!-- 4. 定格瞬间内容面板 (Moments & Gallery Panel) -->
-    <div id="moments-panel" class="content-panel">
-        <div class="panel-back-bar">
-            <div class="back-btn" onclick="closePanel()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span>返回主页</span>
+            <!-- 照片画廊 (Gallery Grid) -->
+            <div class="gallery-header-row">
+                <span class="gallery-count-badge" id="gallery-count-text">ARCHIVES / 0 FRAMES</span>
             </div>
-        </div>
-        <div class="panel-header">
-            <div class="panel-badge">FRAMED MOMENTS</div>
-            <h2 class="panel-title">定格瞬间</h2>
-            <p class="panel-desc">点击任意照片即可无损放大，并查看完整 EXIF 拍摄参数仪表盘。</p>
-        </div>
 
-        <!-- 极简器材展示 -->
-        <div class="gear-section">
-            <div class="gear-grid" id="gear-container"></div>
-        </div>
+            <div class="gallery-grid" id="gallery-container"></div>
+        </section>
 
-        <!-- 相册画廊 -->
-        <div class="gallery-header-row">
-            <span class="gallery-count-badge" id="gallery-count-text">ARCHIVES / 0 FRAMES</span>
-        </div>
-        <div class="gallery-grid" id="gallery-container"></div>
-    </div>
+    </main>
 
-    <!-- 5. 沉浸式照片放大 Lightbox -->
+    <!-- 4. 沉浸式照片放大 Lightbox -->
     <div id="lightbox" role="dialog" aria-modal="true" aria-label="照片放大查看器">
         <button class="lb-btn lb-close" id="lb-close-btn" title="关闭 (Esc)">
             <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -940,7 +898,7 @@
         </div>
     </div>
 
-    <!-- 6. 纯图标点赞/踩与页脚 -->
+    <!-- 5. 纯图标点赞/踩与页脚 -->
     <footer id="master-footer">
         <div class="pure-vote-row">
             <div class="pure-vote-btn" onclick="handlePureVote('up')" title="赞">
@@ -955,16 +913,21 @@
         <p class="footer-copyright">LOGIC STUDIO &copy; 2026</p>
     </footer>
 
+    <!-- 返回顶部悬浮按钮 -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="返回顶部">
+        <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+
     <!-- JavaScript 交互逻辑 -->
     <script>
         let currentPhotoIndex = 0;
-        let lastScrollY = 0;
 
-        function scrollToPortal() {
-            if (typeof gsap !== 'undefined') {
-                gsap.to(window, { scrollTo: "#portal-section", duration: 0.8, ease: "power2.out" });
-            } else {
-                document.getElementById('portal-section').scrollIntoView({ behavior: 'smooth' });
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                const yOffset = -70;
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
             }
         }
 
@@ -994,7 +957,7 @@
             `).join('');
         }
 
-        // 渲染极简拍摄器材 (Minimalist Equipment)
+        // 渲染纯英文极简拍摄器材 (Minimalist Gear)
         function renderGear() {
             const container = document.getElementById('gear-container');
             if (!container || typeof gearData === 'undefined') return;
@@ -1042,52 +1005,6 @@
             `).join('');
         }
 
-        // 打开内容板块 (思绪切片 / 定格瞬间)
-        function openPanel(panelId) {
-            lastScrollY = window.scrollY;
-
-            // 隐藏首页主菜单
-            document.getElementById('hero').style.display = 'none';
-            document.getElementById('portal-section').style.display = 'none';
-            document.getElementById('master-footer').style.display = 'none';
-
-            // 显示并激活目标面板
-            document.querySelectorAll('.content-panel').forEach(p => {
-                p.classList.remove('active');
-                p.style.display = 'none';
-            });
-
-            const targetPanel = document.getElementById(panelId);
-            if (targetPanel) {
-                targetPanel.style.display = 'block';
-                // 强制重绘以触发 transition
-                void targetPanel.offsetWidth;
-                targetPanel.classList.add('active');
-
-                window.scrollTo(0, 0);
-
-                if (panelId === 'articles-panel') renderArticles();
-                if (panelId === 'moments-panel') {
-                    renderGear();
-                    renderGallery();
-                }
-            }
-        }
-
-        // 关闭内容板块，返回主导航
-        function closePanel() {
-            document.querySelectorAll('.content-panel').forEach(p => {
-                p.classList.remove('active');
-                p.style.display = 'none';
-            });
-
-            document.getElementById('hero').style.display = 'flex';
-            document.getElementById('portal-section').style.display = 'flex';
-            document.getElementById('master-footer').style.display = 'block';
-
-            window.scrollTo({ top: lastScrollY, behavior: 'auto' });
-        }
-
         // Lightbox 弹窗控制与 EXIF
         function openLightbox(index) {
             if (index < 0 || index >= galleryData.length) return;
@@ -1108,6 +1025,7 @@
 
             lbImg.src = photo.web;
             lbImg.onerror = function() {
+                this.onerror = null;
                 this.src = photo.thumb;
             };
 
@@ -1143,6 +1061,21 @@
             localStorage.setItem('pure_vote_' + type, current);
             document.getElementById('count-' + type).innerText = current;
         }
+
+        // 滚动监听导航
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('top-nav');
+            const backToTop = document.getElementById('back-to-top');
+            const scrollY = window.scrollY;
+
+            if (scrollY > 300) {
+                nav.classList.add('visible');
+                backToTop.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+                backToTop.classList.remove('visible');
+            }
+        });
 
         // 键盘事件
         document.addEventListener('keydown', (e) => {

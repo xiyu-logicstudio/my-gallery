@@ -5,21 +5,21 @@
 const articleData = [
   {
     title: "由一道题引发的思考",
-    date: "2026 / 02 / 20",
+    date: "2025 / 09 / 24",
     summary: "从具体问题出发，剖析思维脉络与深层逻辑思考。",
     url: "https://mp.weixin.qq.com/s/wrq8bHkXAtFApLXR4gArEg",
     tag: "思考随笔"
   },
   {
     title: "由自身经历浅显地谈一谈我对于上海市高考的理解与感悟（Ⅰ: 语文篇）",
-    date: "2026 / 01 / 15",
+    date: "2026 / 07 / 24",
     summary: "立足亲身经历与备考观察，分享关于上海高考语文的系统认知与感悟。",
     url: "https://mp.weixin.qq.com/s/wHNv3QLal6ta-9CfrTmxGw?scene=1&click_id=493130552",
     tag: "高考感悟 · 语文"
   },
   {
     title: "由自身经历浅显地谈一谈我对于上海市高考的理解与感悟（Ⅱ: 数学篇）",
-    date: "2025 / 12 / 10",
+    date: "2026 / 08 / 09",
     summary: "谈一谈我眼中的数学，关于逻辑构建、知识体系与做题思考的深度梳理。",
     url: "https://mp.weixin.qq.com/s/G5ZKGlPfryYcJIJbtGP2og",
     tag: "高考感悟 · 数学"
