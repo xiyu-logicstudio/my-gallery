@@ -1,6 +1,7 @@
 @echo off
 chcp 65001 >nul
 title LOGIC STUDIO - 自动同步工具
+set "PATH=C:\Users\26399\AppData\Local\GitHubDesktop\app-3.6.4\resources\app\git\cmd;%PATH%"
 echo =======================================================
 echo   XIYU LOGIC STUDIO - 自动图片处理与 GitHub 同步
 echo =======================================================
