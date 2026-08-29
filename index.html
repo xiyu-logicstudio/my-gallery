@@ -526,30 +526,32 @@
             position: absolute;
             inset: 0;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 24px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.4s;
+            pointer-events: none;
         }
 
         .photo-card:hover .photo-hover-ui {
             opacity: 1;
         }
 
-        .photo-zoom-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+        .hover-date {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 4px;
         }
-        .photo-zoom-icon svg { width: 20px; height: 20px; stroke: currentColor; }
+
+        .hover-camera {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
 
         /* ========================================================
            6. Lightbox 沉浸式照片放大 (EXIF Viewer)
@@ -967,9 +969,8 @@
                 <div class="photo-card" onclick="openLightbox(${idx})">
                     <img src="${photo.thumb}" class="photo-img" alt="Photo ${idx}">
                     <div class="photo-hover-ui">
-                        <div class="photo-zoom-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                        </div>
+                        <div class="hover-date">${photo.date || ''}</div>
+                        <div class="hover-camera">${photo.exif.camera || 'LOGIC STUDIO'}</div>
                     </div>
                 </div>
             `).join('');
