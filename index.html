@@ -66,7 +66,7 @@
            1. 纯净开屏区 (Hero)
            ======================================================== */
         #hero {
-            height: 100vh;
+            height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -89,9 +89,11 @@
             font-weight: 800;
             letter-spacing: 0.25em;
             margin-right: -0.25em;
-            color: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a5b0 40%, #ffffff 80%, #e0e5ec 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             line-height: 1.1;
-            text-shadow: 0 0 40px rgba(255,255,255,0.05);
+            text-shadow: 0 10px 30px rgba(255,255,255,0.08);
         }
 
         .hero-subtitle {
@@ -133,11 +135,11 @@
            2. 双入口模块 (Dual Portals)
            ======================================================== */
         #portals-section {
-            min-height: 100vh;
+            min-height: 60vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 60px 24px;
+            padding: 0 24px 80px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -254,6 +256,30 @@
         
         .portal-card:hover .portal-enter-hint svg {
             transform: translateX(4px);
+        }
+
+        .portal-card.blue-accent:hover {
+            border-color: rgba(74, 158, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(74, 158, 255, 0.08);
+        }
+        .portal-card.blue-accent .portal-tag {
+            color: #4a9eff;
+        }
+        .portal-card.blue-accent:hover .portal-icon {
+            background: linear-gradient(135deg, #4a9eff, #2b7ce3);
+            border-color: #4a9eff;
+        }
+
+        .portal-card.yellow-accent:hover {
+            border-color: rgba(246, 211, 101, 0.5);
+            box-shadow: 0 10px 40px rgba(246, 211, 101, 0.08);
+        }
+        .portal-card.yellow-accent .portal-tag {
+            color: #f6d365;
+        }
+        .portal-card.yellow-accent:hover .portal-icon {
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            border-color: #f6d365;
         }
 
         /* ========================================================
@@ -738,7 +764,7 @@
         <div class="portals-grid">
             
             <!-- 思绪切片入口 -->
-            <a onclick="openPanel('articles-panel')" class="portal-card">
+            <a onclick="openPanel('articles-panel')" class="portal-card blue-accent">
                 <div class="portal-top">
                     <span class="portal-tag">ESSAYS & DIALOGUES</span>
                     <div class="portal-icon">
@@ -753,7 +779,7 @@
             </a>
 
             <!-- 定格瞬间入口 -->
-            <a onclick="openPanel('moments-panel')" class="portal-card">
+            <a onclick="openPanel('moments-panel')" class="portal-card yellow-accent">
                 <div class="portal-top">
                     <span class="portal-tag">FRAMED MOMENTS</span>
                     <div class="portal-icon">
