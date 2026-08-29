@@ -2,35 +2,36 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOGIC STUDIO</title>
-    <meta name="description" content="LOGIC STUDIO - 鎬濈华鍒囩墖涓庡畾鏍肩灛闂淬€?>
-    <!-- Google Fonts 鐜颁唬鍖栧瓧浣?-->
+    <meta name="description" content="LOGIC STUDIO - 思绪切片与定格瞬间。">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- GSAP 鍔ㄧ敾搴?-->
+    
+    <!-- GSAP for smooth animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-    <!-- 鏍稿績鏁版嵁婧?-->
+    
+    <!-- Data Source -->
     <script src="data.js"></script>
 
     <style>
         :root {
-            --bg-base: #0a0b0d;
-            --bg-surface: #121318;
-            --bg-elevated: #1a1c23;
-            --bg-glass: rgba(18, 19, 24, 0.85);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.28);
+            --bg-base: #060709;
+            --bg-surface: #0f1115;
+            --bg-elevated: #16181d;
+            --bg-glass: rgba(15, 17, 21, 0.7);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-hover: rgba(255, 255, 255, 0.15);
             --text-primary: #f4f4f6;
-            --text-secondary: #9da2b0;
-            --text-muted: #5e6473;
-            --accent-blue: #4a9eff;
-            --accent-gold: #d4b170;
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
+            --text-secondary: #8b909e;
+            --text-muted: #4e5361;
+            --accent: #ffffff;
+            --radius-md: 12px;
+            --radius-lg: 24px;
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
         }
 
@@ -51,17 +52,19 @@
         body {
             overflow-x: hidden;
             line-height: 1.6;
-            background: radial-gradient(circle at 50% 0%, #161822 0%, #0a0b0d 70%);
+            background: radial-gradient(circle at 50% 0%, #0f1115 0%, #060709 100%);
             min-height: 100vh;
         }
 
-        /* 婊氬姩鏉?*/
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: #282a35; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3e4252; }
+        /* 极简滚动条 */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a2d36; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4e5361; }
 
-        /* 1. 寮€灞忓尯 (Hero) */
+        /* ========================================================
+           1. 纯净开屏区 (Hero)
+           ======================================================== */
         #hero {
             height: 100vh;
             display: flex;
@@ -72,413 +75,376 @@
             position: relative;
             padding: 0 20px;
             user-select: none;
-            transition: opacity 0.35s ease;
+            transition: opacity 0.5s ease;
         }
+
         .hero-title-wrap {
             opacity: 0;
-            transform: scale(0.96) translateY(20px);
-            animation: heroFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            transform: scale(0.95) translateY(10px);
+            animation: fadeUpIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
         }
+
         .hero-title {
-            font-size: clamp(2.8rem, 7.5vw, 6rem);
+            font-size: clamp(3rem, 10vw, 7.5rem);
             font-weight: 800;
-            letter-spacing: 0.28em;
-            margin-right: -0.28em;
-            background: linear-gradient(180deg, #ffffff 30%, #8e92a0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+            letter-spacing: 0.25em;
+            margin-right: -0.25em;
+            color: #ffffff;
             line-height: 1.1;
+            text-shadow: 0 0 40px rgba(255,255,255,0.05);
         }
-        @keyframes heroFadeIn {
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+
+        .hero-subtitle {
+            font-size: 0.75rem;
+            letter-spacing: 0.5em;
+            margin-right: -0.5em;
+            color: var(--text-muted);
+            margin-top: 24px;
+            text-transform: uppercase;
         }
-        .scroll-indicator {
+
+        @keyframes fadeUpIn {
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .scroll-down-btn {
             position: absolute;
-            bottom: 45px;
+            bottom: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.4;
             transition: opacity 0.3s, transform 0.3s;
-            animation: floatUpDown 2.2s infinite ease-in-out;
+            animation: float 2.5s infinite ease-in-out;
         }
-        .scroll-indicator:hover {
-            opacity: 1;
-            transform: translateY(4px);
-        }
-        .scroll-indicator svg {
-            width: 22px;
-            height: 22px;
+        .scroll-down-btn:hover { opacity: 1; }
+        .scroll-down-btn svg {
+            width: 20px;
+            height: 20px;
             stroke: var(--text-secondary);
         }
-        @keyframes floatUpDown {
+        @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(8px); }
         }
 
-        /* 2. 涓诲叆鍙ｈ彍鍗?(Portal Menu) */
-        #portal-section {
-            min-height: 80vh;
+        /* ========================================================
+           2. 双入口模块 (Dual Portals)
+           ======================================================== */
+        #portals-section {
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 24px 80px;
-            max-width: 1100px;
+            padding: 60px 24px;
+            max-width: 1200px;
             margin: 0 auto;
-            transition: opacity 0.35s ease;
         }
-        .portal-grid {
+
+        .portals-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
+            grid-template-columns: 1fr;
+            gap: 24px;
             width: 100%;
         }
-        @media (max-width: 768px) {
-            .portal-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
+
+        @media (min-width: 768px) {
+            .portals-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
         }
+
         .portal-card {
-            background: linear-gradient(145deg, var(--bg-surface) 0%, #151720 100%);
+            background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
-            padding: 48px 36px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            padding: 60px 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 320px;
-            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
+            text-decoration: none;
+            color: inherit;
         }
-        .portal-card::after {
+
+        .portal-card::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.03) 0%, transparent 70%);
             opacity: 0;
-            transition: opacity 0.4s;
+            transition: opacity 0.5s;
         }
+
         .portal-card:hover {
             transform: translateY(-8px);
             border-color: var(--border-hover);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
-        .portal-card:hover::after {
-            opacity: 1;
-        }
-        .portal-tag {
-            font-size: 0.72rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        .portal-card:nth-child(2) .portal-tag {
-            color: var(--accent-gold);
-        }
-        .portal-title {
-            font-size: clamp(1.8rem, 3vw, 2.3rem);
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #fff;
-            margin-bottom: 14px;
-        }
-        .portal-desc {
-            font-size: 0.92rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-        .portal-action {
+        .portal-card:hover::before { opacity: 1; }
+
+        .portal-top {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #fff;
-            transition: gap 0.3s;
-        }
-        .portal-card:hover .portal-action {
-            gap: 16px;
-            color: var(--accent-blue);
-        }
-        .portal-card:nth-child(2):hover .portal-action {
-            color: var(--accent-gold);
-        }
-        .portal-action svg {
-            width: 16px;
-            height: 16px;
-            stroke-width: 2.5;
-            transition: transform 0.3s;
-        }
-        .portal-card:hover .portal-action svg {
-            transform: translateX(4px);
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        /* 3. 鏉垮潡鍐呭瀹瑰櫒 (Content Panels) */
+        .portal-tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .portal-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s, background 0.4s;
+        }
+        .portal-icon svg { width: 16px; height: 16px; stroke: #fff; }
+        .portal-card:hover .portal-icon {
+            transform: scale(1.1) rotate(45deg);
+            background: #fff;
+        }
+        .portal-card:hover .portal-icon svg { stroke: #000; }
+
+        .portal-bottom h2 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        
+        .portal-bottom p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ========================================================
+           3. 内容面板通用样式 (Content Panels)
+           ======================================================== */
         .content-panel {
             display: none;
             opacity: 0;
             min-height: 100vh;
-            max-width: 1280px;
+            padding: 40px 24px 100px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 80px 24px 100px;
-            position: relative;
-            transition: opacity 0.4s ease;
         }
+
         .content-panel.active {
             display: block;
-            opacity: 1;
+            animation: panelFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .panel-back-bar {
+
+        @keyframes panelFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-nav {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
         }
+
         .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--bg-surface);
+            gap: 12px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-subtle);
+            padding: 12px 24px;
             border-radius: 30px;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 500;
+            letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.3s;
-            user-select: none;
         }
         .back-btn:hover {
-            color: #fff;
-            border-color: var(--border-hover);
-            background: #1c1e26;
-            transform: translateX(-3px);
+            background: #fff;
+            color: #000;
         }
-        .back-btn svg {
-            width: 16px;
-            height: 16px;
-            stroke-width: 2;
-        }
+        .back-btn svg { width: 16px; height: 16px; stroke: currentColor; }
 
         .panel-header {
-            margin-bottom: 48px;
-        }
-        .panel-badge {
-            font-size: 0.72rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 60px;
         }
         .panel-title {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            font-weight: 800;
+            font-size: 3rem;
+            font-weight: 700;
             letter-spacing: 2px;
             color: #fff;
-            margin-bottom: 12px;
         }
         .panel-desc {
-            font-size: 0.95rem;
             color: var(--text-secondary);
-            max-width: 650px;
-            line-height: 1.7;
+            margin-top: 16px;
+            font-size: 1rem;
         }
 
-        /* 3.1 鎬濈华鍒囩墖 (Articles Grid) */
+        /* ========================================================
+           4. 思绪切片 (Articles)
+           ======================================================== */
         .articles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 24px;
         }
+
         .article-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
-            padding: 30px 26px;
+            padding: 32px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             text-decoration: none;
             color: inherit;
-            position: relative;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s, box-shadow 0.35s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .article-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-hover);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.2);
+            background: var(--bg-elevated);
         }
+
         .article-meta {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            align-items: center;
+            margin-bottom: 20px;
         }
+
         .article-tag {
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-            padding: 3px 10px;
-            background: var(--bg-elevated);
-            color: var(--text-secondary);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            padding: 4px 10px;
             border-radius: 4px;
-            border: 1px solid var(--border-subtle);
+            text-transform: uppercase;
         }
+
         .article-date {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             letter-spacing: 1px;
         }
+
         .article-title {
-            font-size: 1.18rem;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 600;
             line-height: 1.5;
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
+
         .article-summary {
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 24px;
             flex-grow: 1;
         }
-        .article-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        .article-read-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.82rem;
-            transition: gap 0.3s;
-        }
-        .article-card:hover .article-read-btn {
-            gap: 10px;
-            color: var(--accent-blue);
-        }
-        .article-read-btn svg {
-            width: 14px;
-            height: 14px;
-            stroke-width: 2;
-        }
 
-        /* 3.2 鏋佺畝鎽勫奖鍣ㄦ潗 (Minimalist Gear) */
+        .article-read {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #fff;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .article-read svg { width: 14px; height: 14px; stroke: currentColor; transition: transform 0.3s; }
+        .article-card:hover .article-read svg { transform: translateX(4px); }
+
+        /* ========================================================
+           5. 定格瞬间 (Photography)
+           ======================================================== */
+        /* 极简器材 (Minimalist Gear) */
         .gear-section {
             margin-bottom: 60px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 40px;
         }
+        
+        .gear-title {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
         .gear-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
+
         .gear-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
             padding: 24px;
-            transition: border-color 0.3s ease;
         }
-        .gear-card:hover {
-            border-color: var(--border-hover);
-        }
-        .gear-header {
-            margin-bottom: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 12px;
-        }
-        .gear-badge {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-gold);
-            font-weight: 700;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .gear-model {
-            font-size: 1.2rem;
+
+        .gear-card h3 {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
-            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
         }
-        .gear-lenses {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+
         .lens-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: var(--bg-elevated);
-            padding: 9px 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .lens-tag {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .lens-name {
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: #ececec;
+            gap: 12px;
+            background: rgba(255,255,255,0.02);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 8px;
         }
 
-        /* 3.3 鎽勫奖鐢诲粖 (Gallery) */
-        .gallery-header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-        .gallery-count-badge {
-            font-size: 0.8rem;
+        .lens-label {
+            font-size: 0.6rem;
             color: var(--text-muted);
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
+
+        .lens-name {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        /* 摄影画廊瀑布流 (Gallery) */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
-        @media (min-width: 1024px) {
-            .gallery-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 24px;
-            }
-        }
+
         .photo-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
@@ -487,488 +453,413 @@
             position: relative;
             cursor: pointer;
             aspect-ratio: 4 / 3;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
         }
-        .photo-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
-        }
-        .photo-thumb {
+
+        .photo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            background: #191b22;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
             display: block;
+            background: #111;
         }
-        .photo-card:hover .photo-thumb {
-            transform: scale(1.06);
+
+        .photo-card:hover .photo-img {
+            transform: scale(1.05);
+            opacity: 0.8;
         }
-        .photo-overlay {
+
+        .photo-hover-ui {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 40%, rgba(10, 11, 13, 0.9) 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px;
-            opacity: 0;
-            transition: opacity 0.35s ease;
-        }
-        .photo-card:hover .photo-overlay {
-            opacity: 1;
-        }
-        .photo-date-badge {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: #fff;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .photo-camera-badge {
-            font-size: 0.72rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .photo-camera-badge svg {
-            width: 12px;
-            height: 12px;
-            stroke: var(--text-muted);
-        }
-        .photo-zoom-hint {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 32px;
-            height: 32px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transform: scale(0.8);
-            transition: opacity 0.3s, transform 0.3s;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        .photo-card:hover .photo-zoom-hint {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .photo-zoom-hint svg {
-            width: 14px;
-            height: 14px;
-            stroke: #fff;
+            transition: opacity 0.4s;
         }
 
-        /* 4. 娌夋蹈寮?Lightbox 鏀惧ぇ寮圭獥 */
+        .photo-card:hover .photo-hover-ui {
+            opacity: 1;
+        }
+
+        .photo-zoom-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .photo-zoom-icon svg { width: 20px; height: 20px; stroke: currentColor; }
+
+        /* ========================================================
+           6. Lightbox 沉浸式照片放大 (EXIF Viewer)
+           ======================================================== */
         #lightbox {
             position: fixed;
             inset: 0;
-            z-index: 2500;
-            background: rgba(8, 9, 11, 0.94);
+            z-index: 2000;
+            background: rgba(6, 7, 9, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: none;
             opacity: 0;
-            justify-content: center;
             align-items: center;
-            padding: 30px;
-            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            justify-content: center;
+            padding: 20px;
+            transition: opacity 0.4s;
         }
+
         #lightbox.active {
             display: flex;
             opacity: 1;
         }
+
         .lb-container {
             width: 100%;
-            max-width: 1440px;
+            max-width: 1600px;
             height: 90vh;
             display: flex;
+            gap: 40px;
             align-items: center;
-            justify-content: center;
-            gap: 36px;
-            position: relative;
         }
+
         @media (max-width: 1024px) {
             .lb-container {
                 flex-direction: column;
-                height: 92vh;
-                gap: 16px;
+                height: auto;
+                max-height: 95vh;
                 overflow-y: auto;
+                gap: 20px;
             }
         }
-        .lb-img-wrap {
+
+        .lb-image-wrapper {
             flex: 1;
-            height: 100%;
-            max-height: 86vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-            user-select: none;
+            height: 100%;
         }
-        .lb-img {
+
+        .lb-image {
             max-width: 100%;
-            max-height: 100%;
+            max-height: 90vh;
             object-fit: contain;
-            border-radius: var(--radius-sm);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-            transform: scale(1);
-            transition: transform 0.3s ease;
-            opacity: 1;
-            display: block;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        .lb-exif-card {
+
+        /* EXIF 信息卡片 */
+        .lb-exif-panel {
             width: 320px;
-            background: rgba(22, 24, 31, 0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-hover);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: var(--radius-md);
-            padding: 26px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            padding: 32px;
             flex-shrink: 0;
         }
+        
         @media (max-width: 1024px) {
-            .lb-exif-card {
+            .lb-exif-panel {
                 width: 100%;
                 max-width: 600px;
-                padding: 20px;
-                gap: 12px;
             }
         }
+
         .exif-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .exif-tag {
-            font-size: 0.68rem;
+
+        .exif-title {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
+
         .exif-date {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
             letter-spacing: 1px;
         }
-        .exif-filename {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-top: 2px;
+
+        .exif-row {
+            margin-bottom: 20px;
         }
-        .exif-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .exif-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 8px 10px;
-            border-radius: var(--radius-sm);
-        }
+        .exif-row:last-child { margin-bottom: 0; }
+
         .exif-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.6rem;
             color: var(--text-muted);
-        }
-        .exif-val {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #efefef;
-        }
-        .exif-device-block {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 10px 12px;
-            border-radius: var(--radius-sm);
-        }
-        .exif-device-title {
-            font-size: 0.65rem;
-            color: var(--text-muted);
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
-        .exif-device-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 2px;
+
+        .exif-value {
+            font-size: 0.9rem;
+            color: #ddd;
+            font-weight: 500;
         }
-        .lb-btn {
+
+        .exif-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Lightbox 关闭按钮 */
+        .lb-close {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #fff;
-            backdrop-filter: blur(10px);
-            transition: all 0.25s;
-            z-index: 2600;
+            transition: all 0.3s;
+            z-index: 2100;
         }
-        .lb-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.08);
+        .lb-close:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
         }
-        .lb-btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: #fff;
-            stroke-width: 2;
-            fill: none;
-        }
-        .lb-close { top: 24px; right: 24px; }
-        .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
-        .lb-prev:hover { transform: translateY(-50%) scale(1.08); }
-        .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
-        .lb-next:hover { transform: translateY(-50%) scale(1.08); }
+        .lb-close svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; }
 
-        /* 5. 鏋佺畝椤佃剼涓庣函鍥炬爣鐐硅禐/韪?*/
-        #master-footer {
-            padding: 70px 24px 40px;
-            border-top: 1px solid var(--border-subtle);
+        /* ========================================================
+           7. Footer (互动点赞)
+           ======================================================== */
+        footer {
+            padding: 80px 20px 40px;
             text-align: center;
-            transition: opacity 0.35s ease;
         }
-        .pure-vote-row {
+
+        .vote-container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 28px;
-            margin-bottom: 28px;
-            user-select: none;
+            gap: 24px;
+            margin-bottom: 40px;
         }
-        .pure-vote-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 30px;
+
+        .vote-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .pure-vote-btn svg {
-            width: 20px;
-            height: 20px;
-            stroke-width: 1.8;
-            stroke: currentColor;
-            fill: none;
-            transition: transform 0.25s;
-        }
-        .pure-vote-btn:hover {
+
+        .vote-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; transition: transform 0.3s; }
+        
+        .vote-btn:hover {
             border-color: #fff;
             color: #fff;
-            background: #1e2028;
-            transform: translateY(-2px);
+            transform: translateY(-4px);
         }
-        .pure-vote-btn:hover svg {
-            transform: scale(1.15);
-        }
-        .pure-vote-count {
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-        .footer-copyright {
+        .vote-btn:hover svg { transform: scale(1.1); }
+
+        .copyright {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
             color: var(--text-muted);
-            font-size: 0.78rem;
-            letter-spacing: 2px;
+            text-transform: uppercase;
         }
+
     </style>
 </head>
 <body>
 
-    <!-- 1. 寮€灞忓尯 (Hero) -->
+    <!-- 1. 开屏区 (Hero) -->
     <section id="hero">
         <div class="hero-title-wrap">
             <h1 class="hero-title">LOGIC STUDIO</h1>
         </div>
-        <div class="scroll-indicator" onclick="scrollToPortal()">
+        <div class="scroll-down-btn" onclick="scrollToPortals()">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
             </svg>
         </div>
     </section>
 
-    <!-- 2. 涓诲叆鍙ｈ彍鍗?(Portal Cards) -->
-    <div id="portal-section">
-        <div class="portal-grid">
-            <!-- 鎬濈华鍒囩墖鍏ュ彛 -->
-            <div class="portal-card" onclick="openPanel('articles-panel')">
-                <div>
-                    <div class="portal-tag">ESSAYS 路 鍏紬鍙烽殢绗?/div>
-                    <h2 class="portal-title">鎬濈华鍒囩墖</h2>
-                    <p class="portal-desc">娌夋穩鎬濈淮鑴夌粶锛屾敹褰曠簿閫夊叕浼楀彿娣卞害鏂囩珷涓庢€濊€冦€?/p>
+    <!-- 2. 双入口模块 (Dual Portals) -->
+    <section id="portals-section">
+        <div class="portals-grid">
+            
+            <!-- 思绪切片入口 -->
+            <a onclick="openPanel('articles-panel')" class="portal-card">
+                <div class="portal-top">
+                    <span class="portal-tag">ESSAYS & DIALOGUES</span>
+                    <div class="portal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
                 </div>
-                <div class="portal-action">
-                    <span>ENTER / 杩涘叆鏉垮潡</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="portal-bottom">
+                    <h2>思绪切片</h2>
+                    <p>文字沉淀思考，记录对世界的理解与感悟。</p>
                 </div>
-            </div>
+            </a>
 
-            <!-- 瀹氭牸鐬棿鍏ュ彛 -->
-            <div class="portal-card" onclick="openPanel('moments-panel')">
-                <div>
-                    <div class="portal-tag">PHOTOGRAPHY 路 鎽勫奖妗ｆ</div>
-                    <h2 class="portal-title">瀹氭牸鐬棿</h2>
-                    <p class="portal-desc">蹇棬閿佷綇鍏夊奖锛屾祻瑙堜綔鍝佺敾寤婁笌鎷嶆憚鍣ㄦ潗鍙傛暟銆?/p>
+            <!-- 定格瞬间入口 -->
+            <a onclick="openPanel('moments-panel')" class="portal-card">
+                <div class="portal-top">
+                    <span class="portal-tag">FRAMED MOMENTS</span>
+                    <div class="portal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
                 </div>
-                <div class="portal-action">
-                    <span>ENTER / 杩涘叆鏉垮潡</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="portal-bottom">
+                    <h2>定格瞬间</h2>
+                    <p>用影像记录光影，极简摄影作品与器材档案。</p>
                 </div>
-            </div>
+            </a>
+
         </div>
-    </div>
+    </section>
 
-    <!-- 3. 鎬濈华鍒囩墖鍐呭闈㈡澘 (Articles Panel) -->
-    <div id="articles-panel" class="content-panel">
-        <div class="panel-back-bar">
-            <div class="back-btn" onclick="closePanel()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span>杩斿洖涓婚〉</span>
-            </div>
+    <!-- 3. 思绪切片 (Articles Panel) -->
+    <section id="articles-panel" class="content-panel">
+        <div class="panel-nav">
+            <button class="back-btn" onclick="closePanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                BACK
+            </button>
         </div>
         <div class="panel-header">
-            <div class="panel-badge">ESSAYS & DIALOGUES</div>
-            <h2 class="panel-title">鎬濈华鍒囩墖</h2>
-            <p class="panel-desc">鏂囧瓧娌夋穩鎬濊€冦€傜偣鍑诲崱鐗囩洿鎺ュ湪鏂版爣绛鹃〉鎵撳紑寰俊鍏紬鍙烽槄璇诲師鏂囥€?/p>
+            <h1 class="panel-title">思绪切片</h1>
+            <p class="panel-desc">点击卡片直达微信公众号阅读原文。</p>
         </div>
         <div class="articles-grid" id="articles-container"></div>
-    </div>
+    </section>
 
-    <!-- 4. 瀹氭牸鐬棿鍐呭闈㈡澘 (Moments & Gallery Panel) -->
-    <div id="moments-panel" class="content-panel">
-        <div class="panel-back-bar">
-            <div class="back-btn" onclick="closePanel()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                <span>杩斿洖涓婚〉</span>
-            </div>
+    <!-- 4. 定格瞬间 (Photography Panel) -->
+    <section id="moments-panel" class="content-panel">
+        <div class="panel-nav">
+            <button class="back-btn" onclick="closePanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                BACK
+            </button>
         </div>
+        
         <div class="panel-header">
-            <div class="panel-badge">FRAMED MOMENTS</div>
-            <h2 class="panel-title">瀹氭牸鐬棿</h2>
-            <p class="panel-desc">鐐瑰嚮浠绘剰鐓х墖鍗冲彲鏃犳崯鏀惧ぇ锛屽苟鏌ョ湅瀹屾暣 EXIF 鎷嶆憚鍙傛暟浠〃鐩樸€?/p>
+            <h1 class="panel-title">定格瞬间</h1>
+            <p class="panel-desc">点击照片即可无损放大，并查看极简 EXIF 拍摄参数。</p>
         </div>
 
-        <!-- 鏋佺畝鍣ㄦ潗灞曠ず -->
+        <!-- 器材展示 (Gear) -->
         <div class="gear-section">
+            <div class="gear-title">EQUIPMENT</div>
             <div class="gear-grid" id="gear-container"></div>
         </div>
 
-        <!-- 鐩稿唽鐢诲粖 -->
-        <div class="gallery-header-row">
-            <span class="gallery-count-badge" id="gallery-count-text">ARCHIVES / 0 FRAMES</span>
-        </div>
+        <!-- 照片瀑布流 (Gallery) -->
+        <div class="gear-title" style="margin-bottom: 24px;">ARCHIVES</div>
         <div class="gallery-grid" id="gallery-container"></div>
-    </div>
+    </section>
 
-    <!-- 5. 娌夋蹈寮忕収鐗囨斁澶?Lightbox -->
-    <div id="lightbox" role="dialog" aria-modal="true" aria-label="鐓х墖鏀惧ぇ鏌ョ湅鍣?>
-        <button class="lb-btn lb-close" id="lb-close-btn" title="鍏抽棴 (Esc)">
-            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-        <button class="lb-btn lb-prev" id="lb-prev-btn" title="涓婁竴寮?(鈫?">
-            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="lb-btn lb-next" id="lb-next-btn" title="涓嬩竴寮?(鈫?">
-            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    <!-- 5. 沉浸式照片放大 Lightbox -->
+    <div id="lightbox" role="dialog" aria-modal="true">
+        <button class="lb-close" onclick="closeLightbox()" title="Close">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
 
-        <div class="lb-container" id="lb-content">
-            <div class="lb-img-wrap">
-                <img id="lb-img" class="lb-img" alt="Enlarged Photo">
+        <div class="lb-container">
+            <div class="lb-image-wrapper">
+                <img id="lb-img" class="lb-image" alt="Enlarged Photo">
             </div>
             
-            <!-- EXIF HUD 卡片 -->
-            <div class="lb-exif-card">
+            <!-- EXIF 极简卡片 -->
+            <div class="lb-exif-panel">
                 <div class="exif-header">
-                    <div class="exif-tag">EXIF METADATA</div>
+                    <div class="exif-title">CAPTURED ON</div>
                     <div class="exif-date" id="exif-date">--</div>
-                    <div class="exif-filename" id="exif-filename">--</div>
                 </div>
 
-                <div class="exif-device-block">
-                    <div class="exif-device-title">CAMERA</div>
-                    <div class="exif-device-name" id="exif-camera">LOGIC STUDIO</div>
+                <div class="exif-row">
+                    <div class="exif-label">CAMERA</div>
+                    <div class="exif-value" id="exif-camera">N/A</div>
                 </div>
 
-                <div class="exif-device-block">
-                    <div class="exif-device-title">LENS</div>
-                    <div class="exif-device-name" id="exif-lens">N/A</div>
+                <div class="exif-row" style="margin-bottom: 32px;">
+                    <div class="exif-label">LENS</div>
+                    <div class="exif-value" id="exif-lens">N/A</div>
                 </div>
 
-                <div class="exif-grid">
-                    <div class="exif-item">
-                        <div class="exif-label">Aperture / 鍏夊湀</div>
-                        <div class="exif-val" id="exif-aperture">鏆傛棤淇℃伅</div>
+                <div class="exif-grid-2">
+                    <div class="exif-row">
+                        <div class="exif-label">APERTURE</div>
+                        <div class="exif-value" id="exif-aperture">N/A</div>
                     </div>
-                    <div class="exif-item">
-                        <div class="exif-label">Shutter / 蹇棬</div>
-                        <div class="exif-val" id="exif-shutter">鏆傛棤淇℃伅</div>
+                    <div class="exif-row">
+                        <div class="exif-label">SHUTTER</div>
+                        <div class="exif-value" id="exif-shutter">N/A</div>
                     </div>
-                    <div class="exif-item">
-                        <div class="exif-label">ISO / 鎰熷厜搴?/div>
-                        <div class="exif-val" id="exif-iso">鏆傛棤淇℃伅</div>
+                </div>
+
+                <div class="exif-grid-2" style="margin-bottom: 0;">
+                    <div class="exif-row">
+                        <div class="exif-label">ISO</div>
+                        <div class="exif-value" id="exif-iso">N/A</div>
                     </div>
-                    <div class="exif-item">
-                        <div class="exif-label">Focal / 鐒﹁窛</div>
-                        <div class="exif-val" id="exif-focal">鏆傛棤淇℃伅</div>
+                    <div class="exif-row">
+                        <div class="exif-label">FOCAL</div>
+                        <div class="exif-value" id="exif-focal">N/A</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 6. 绾浘鏍囩偣璧?韪╀笌椤佃剼 -->
+    <!-- 6. Footer -->
     <footer id="master-footer">
-        <div class="pure-vote-row">
-            <div class="pure-vote-btn" onclick="handlePureVote('up')" title="璧?>
+        <div class="vote-container">
+            <div class="vote-btn" onclick="triggerVote(this)" title="Upvote">
                 <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-                <span class="pure-vote-count" id="count-up">0</span>
             </div>
-            <div class="pure-vote-btn" onclick="handlePureVote('down')" title="涓嶈禐">
+            <div class="vote-btn" onclick="triggerVote(this)" title="Downvote">
                 <svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
-                <span class="pure-vote-count" id="count-down">0</span>
             </div>
         </div>
-        <p class="footer-copyright">LOGIC STUDIO &copy; 2026</p>
+        <div class="copyright">LOGIC STUDIO &copy; 2026</div>
     </footer>
 
-    <!-- JavaScript 浜や簰閫昏緫 -->
+    <!-- JavaScript 交互逻辑 -->
     <script>
-        let currentPhotoIndex = 0;
-        let lastScrollY = 0;
+        let lastScrollPosition = 0;
 
-        function scrollToPortal() {
+        function scrollToPortals() {
             if (typeof gsap !== 'undefined') {
-                gsap.to(window, { scrollTo: "#portal-section", duration: 0.8, ease: "power2.out" });
+                gsap.to(window, { scrollTo: "#portals-section", duration: 0.8, ease: "power2.out" });
             } else {
-                document.getElementById('portal-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('portals-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // 娓叉煋寰俊鍏紬鍙锋枃绔?(鎬濈华鍒囩墖)
+        // 渲染公众号文章 (思绪切片)
         function renderArticles() {
             const container = document.getElementById('articles-container');
             if (!container || typeof articleData === 'undefined') return;
@@ -977,90 +868,74 @@
                 <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="article-card">
                     <div>
                         <div class="article-meta">
-                            <span class="article-tag">${item.tag || '娣卞害闃呰'}</span>
+                            <span class="article-tag">${item.tag || 'ESSAY'}</span>
                             <span class="article-date">${item.date || ''}</span>
                         </div>
                         <h3 class="article-title">${item.title}</h3>
-                        <p class="article-summary">${item.summary || '鐐瑰嚮闃呰鍏ㄦ枃...'}</p>
+                        <p class="article-summary">${item.summary || '阅读原文...'}</p>
                     </div>
-                    <div class="article-footer">
-                        <span>寰俊鍏紬鍙?/span>
-                        <div class="article-read-btn">
-                            <span>闃呰鍘熸枃</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </div>
+                    <div class="article-read">
+                        READ MORE
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </div>
                 </a>
             `).join('');
         }
 
-        // 娓叉煋鏋佺畝鎷嶆憚鍣ㄦ潗 (Minimalist Equipment)
+        // 渲染极简器材 (Gear)
         function renderGear() {
             const container = document.getElementById('gear-container');
             if (!container || typeof gearData === 'undefined') return;
 
             container.innerHTML = gearData.map(gear => `
                 <div class="gear-card">
-                    <div class="gear-header">
-                        <span class="gear-badge">CAMERA</span>
-                        <h3 class="gear-model">${gear.camera}</h3>
-                    </div>
-                    <div class="gear-lenses">
-                        ${gear.lenses.map(lensName => `
-                            <div class="lens-row">
-                                <span class="lens-tag">LENS</span>
-                                <span class="lens-name">${lensName}</span>
-                            </div>
-                        `).join('')}
-                    </div>
+                    <h3>${gear.camera}</h3>
+                    ${gear.lenses.map(lens => `
+                        <div class="lens-row">
+                            <span class="lens-label">LENS</span>
+                            <span class="lens-name">${lens}</span>
+                        </div>
+                    `).join('')}
                 </div>
             `).join('');
         }
 
-        // 娓叉煋鎽勫奖鐢诲粖 (Gallery)
+        // 渲染照片画廊瀑布流 (Gallery)
+        // 要求：使用缩略图以保证性能不卡顿，但清晰度足够。
         function renderGallery() {
             const container = document.getElementById('gallery-container');
-            const countText = document.getElementById('gallery-count-text');
             if (!container || typeof galleryData === 'undefined') return;
 
-            countText.innerText = `ARCHIVES / ${galleryData.length} FRAMES`;
-
+            // 注意：这里没有使用 loading="lazy"，避免在隐藏面板中浏览器不加载的问题。
+            // 使用 src="${photo.thumb}" 来保证性能飞快。
             container.innerHTML = galleryData.map((photo, idx) => `
                 <div class="photo-card" onclick="openLightbox(${idx})">
-                    <img src="${photo.thumb}" class="photo-thumb" alt="Photo ${idx + 1}">
-                    <div class="photo-zoom-hint">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    </div>
-                    <div class="photo-overlay">
-                        <div class="photo-date-badge">${photo.date || '杩戞湡鎷嶆憚'}</div>
-                        <div class="photo-camera-badge">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
-                            ${photo.exif.camera || 'LOGIC STUDIO'}
+                    <img src="${photo.thumb}" class="photo-img" alt="Photo ${idx}">
+                    <div class="photo-hover-ui">
+                        <div class="photo-zoom-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 鎵撳紑鍐呭鏉垮潡 (鎬濈华鍒囩墖 / 瀹氭牸鐬棿)
+        // 页面模块切换逻辑
         function openPanel(panelId) {
-            lastScrollY = window.scrollY;
+            lastScrollPosition = window.scrollY;
 
-            // 闅愯棌棣栭〉涓昏彍鍗?            document.getElementById('hero').style.display = 'none';
-            document.getElementById('portal-section').style.display = 'none';
+            // 隐藏主页
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('portals-section').style.display = 'none';
             document.getElementById('master-footer').style.display = 'none';
 
-            // 鏄剧ず骞舵縺娲荤洰鏍囬潰鏉?            document.querySelectorAll('.content-panel').forEach(p => {
-                p.classList.remove('active');
-                p.style.display = 'none';
-            });
-
-            const targetPanel = document.getElementById(panelId);
-            if (targetPanel) {
-                targetPanel.style.display = 'block';
-                // 寮哄埗閲嶇粯浠ヨЕ鍙?transition
-                void targetPanel.offsetWidth;
-                targetPanel.classList.add('active');
+            // 显示对应的面板
+            const target = document.getElementById(panelId);
+            if (target) {
+                target.style.display = 'block';
+                // 强制重绘
+                void target.offsetWidth;
+                target.classList.add('active');
 
                 window.scrollTo(0, 0);
 
@@ -1072,7 +947,6 @@
             }
         }
 
-        // 鍏抽棴鍐呭鏉垮潡锛岃繑鍥炰富瀵艰埅
         function closePanel() {
             document.querySelectorAll('.content-panel').forEach(p => {
                 p.classList.remove('active');
@@ -1080,34 +954,39 @@
             });
 
             document.getElementById('hero').style.display = 'flex';
-            document.getElementById('portal-section').style.display = 'flex';
+            document.getElementById('portals-section').style.display = 'flex';
             document.getElementById('master-footer').style.display = 'block';
 
-            window.scrollTo({ top: lastScrollY, behavior: 'auto' });
+            window.scrollTo({ top: lastScrollPosition, behavior: 'instant' });
         }
 
-        // Lightbox 寮圭獥鎺у埗涓?EXIF
+        // Lightbox 逻辑 (点击放大)
         function openLightbox(index) {
             if (index < 0 || index >= galleryData.length) return;
-            currentPhotoIndex = index;
-
             const photo = galleryData[index];
             const lb = document.getElementById('lightbox');
             const lbImg = document.getElementById('lb-img');
 
-            document.getElementById('exif-date').innerText = photo.date || '鏆傛棤淇℃伅';
-            document.getElementById('exif-filename').innerText = photo.fileName || '';
-            document.getElementById('exif-camera').innerText = photo.exif.camera || '鏆傛棤淇℃伅';
-            document.getElementById('exif-lens').innerText = photo.exif.lens || '鏆傛棤淇℃伅';
-            document.getElementById('exif-aperture').innerText = photo.exif.aperture || '鏆傛棤淇℃伅';
-            document.getElementById('exif-shutter').innerText = photo.exif.shutter || '鏆傛棤淇℃伅';
-            document.getElementById('exif-iso').innerText = photo.exif.iso || '鏆傛棤淇℃伅';
-            document.getElementById('exif-focal').innerText = photo.exif.focalLength || '鏆傛棤淇℃伅';
+            // 极简英文字段填充
+            document.getElementById('exif-date').innerText = photo.date || 'N/A';
+            document.getElementById('exif-camera').innerText = photo.exif.camera || 'N/A';
+            document.getElementById('exif-lens').innerText = photo.exif.lens || 'N/A';
+            
+            // 如果数据里带有中文"暂无信息"，在极简英文主题下强制转为 N/A
+            const sanitize = (val) => (!val || val.includes('暂无信息')) ? 'N/A' : val;
+            
+            document.getElementById('exif-aperture').innerText = sanitize(photo.exif.aperture);
+            document.getElementById('exif-shutter').innerText = sanitize(photo.exif.shutter);
+            document.getElementById('exif-iso').innerText = sanitize(photo.exif.iso);
+            document.getElementById('exif-focal').innerText = sanitize(photo.exif.focalLength);
 
+            // 加载原图(大图)
             lbImg.src = photo.web;
+            // 如果原图加载失败，降级回缩略图
             lbImg.onerror = function() {
+                this.onerror = null;
                 this.src = photo.thumb;
-            };
+            }
 
             lb.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1118,54 +997,22 @@
             document.body.style.overflow = '';
         }
 
-        function nextPhoto() {
-            currentPhotoIndex = (currentPhotoIndex + 1) % galleryData.length;
-            openLightbox(currentPhotoIndex);
+        // 点赞小动效
+        function triggerVote(btn) {
+            btn.style.transform = 'scale(1.2)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#fff';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 200);
         }
 
-        function prevPhoto() {
-            currentPhotoIndex = (currentPhotoIndex - 1 + galleryData.length) % galleryData.length;
-            openLightbox(currentPhotoIndex);
-        }
-
-        // 绾浘鏍囩偣璧?韪?        function initVotes() {
-            ['up', 'down'].forEach(type => {
-                const count = localStorage.getItem('pure_vote_' + type) || '0';
-                document.getElementById('count-' + type).innerText = count;
-            });
-        }
-
-        function handlePureVote(type) {
-            const current = parseInt(localStorage.getItem('pure_vote_' + type) || '0', 10) + 1;
-            localStorage.setItem('pure_vote_' + type, current);
-            document.getElementById('count-' + type).innerText = current;
-        }
-
-        // 閿洏浜嬩欢
+        // 全局键盘事件
         document.addEventListener('keydown', (e) => {
             const lb = document.getElementById('lightbox');
             if (lb.classList.contains('active')) {
                 if (e.key === 'Escape') closeLightbox();
-                else if (e.key === 'ArrowRight') nextPhoto();
-                else if (e.key === 'ArrowLeft') prevPhoto();
             }
-        });
-
-        document.getElementById('lb-close-btn').addEventListener('click', closeLightbox);
-        document.getElementById('lb-next-btn').addEventListener('click', nextPhoto);
-        document.getElementById('lb-prev-btn').addEventListener('click', prevPhoto);
-        document.getElementById('lightbox').addEventListener('click', (e) => {
-            if (e.target.id === 'lightbox' || e.target.id === 'lb-content' || e.target.classList.contains('lb-img-wrap')) {
-                closeLightbox();
-            }
-        });
-
-        // 鍒濆鍖栨墍鏈夋暟鎹笌娓叉煋
-        window.addEventListener('DOMContentLoaded', () => {
-            renderArticles();
-            renderGear();
-            renderGallery();
-            initVotes();
         });
     </script>
 </body>
