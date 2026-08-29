@@ -161,7 +161,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 220px;
+            min-height: 320px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -227,6 +227,33 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
             line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .portal-enter-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: color 0.3s, transform 0.3s;
+        }
+        
+        .portal-enter-hint svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.3s;
+        }
+
+        .portal-card:hover .portal-enter-hint {
+            color: #fff;
+        }
+        
+        .portal-card:hover .portal-enter-hint svg {
+            transform: translateX(4px);
         }
 
         /* ========================================================
@@ -721,6 +748,7 @@
                 <div class="portal-bottom">
                     <h2>思绪切片</h2>
                     <p>文字沉淀思考，记录对世界的理解与感悟。</p>
+                    <div class="portal-enter-hint">CLICK TO ENTER <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
                 </div>
             </a>
 
@@ -735,6 +763,7 @@
                 <div class="portal-bottom">
                     <h2>定格瞬间</h2>
                     <p>用影像记录光影，极简摄影作品与器材档案。</p>
+                    <div class="portal-enter-hint">CLICK TO ENTER <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
                 </div>
             </a>
 
