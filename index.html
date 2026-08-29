@@ -967,10 +967,10 @@
             // 使用 src="${photo.thumb}" 来保证性能飞快。
             container.innerHTML = galleryData.map((photo, idx) => `
                 <div class="photo-card" onclick="openLightbox(${idx})">
-                    <img src="${photo.thumb}" class="photo-img" alt="Photo ${idx}">
+                    <img src="${photo.thumb}?v=3" class="photo-img" alt="Photo ${idx}">
                     <div class="photo-hover-ui">
                         <div class="hover-date">${photo.date || ''}</div>
-                        <div class="hover-camera">${photo.exif.camera || 'LOGIC STUDIO'}</div>
+                        <div class="hover-camera">${(photo.exif && photo.exif.camera) ? photo.exif.camera : 'LOGIC STUDIO'}</div>
                     </div>
                 </div>
             `).join('');
@@ -1025,23 +1025,23 @@
 
             // 极简英文字段填充
             document.getElementById('exif-date').innerText = photo.date || 'N/A';
-            document.getElementById('exif-camera').innerText = photo.exif.camera || 'N/A';
-            document.getElementById('exif-lens').innerText = photo.exif.lens || 'N/A';
+            document.getElementById('exif-camera').innerText = (photo.exif && photo.exif.camera) ? photo.exif.camera : 'N/A';
+            document.getElementById('exif-lens').innerText = (photo.exif && photo.exif.lens) ? photo.exif.lens : 'N/A';
             
-            // 如果数据里带有中文"暂无信息"，在极简英文主题下强制转为 N/A
+            // 如果数据里带有中文"暂无信息"，在极简英文主题下强制转成N/A
             const sanitize = (val) => (!val || val.includes('暂无信息')) ? 'N/A' : val;
             
-            document.getElementById('exif-aperture').innerText = sanitize(photo.exif.aperture);
-            document.getElementById('exif-shutter').innerText = sanitize(photo.exif.shutter);
-            document.getElementById('exif-iso').innerText = sanitize(photo.exif.iso);
-            document.getElementById('exif-focal').innerText = sanitize(photo.exif.focalLength);
+            document.getElementById('exif-aperture').innerText = (photo.exif) ? sanitize(photo.exif.aperture) : 'N/A';
+            document.getElementById('exif-shutter').innerText = (photo.exif) ? sanitize(photo.exif.shutter) : 'N/A';
+            document.getElementById('exif-iso').innerText = (photo.exif) ? sanitize(photo.exif.iso) : 'N/A';
+            document.getElementById('exif-focal').innerText = (photo.exif) ? sanitize(photo.exif.focalLength) : 'N/A';
 
             // 加载原图(大图)
-            lbImg.src = photo.web;
+            lbImg.src = photo.web + '?v=3';
             // 如果原图加载失败，降级回缩略图
             lbImg.onerror = function() {
                 this.onerror = null;
-                this.src = photo.thumb;
+                this.src = photo.thumb + '?v=3';
             }
 
             lb.classList.add('active');
