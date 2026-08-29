@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIC STUDIO</title>
+    <meta name="description" content="LOGIC STUDIO - 思绪切片与定格瞬间。">
+    <!-- Google Fonts 现代化字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <!-- 核心数据源 -->
+    <script src="data.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #0a0b0d;
+            --bg-surface: #121318;
+            --bg-elevated: #1a1c23;
+            --bg-glass: rgba(18, 19, 24, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.28);
+            --text-primary: #f4f4f6;
+            --text-secondary: #9da2b0;
+            --text-muted: #5e6473;
+            --accent-blue: #4a9eff;
+            --accent-gold: #d4b170;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+        }
+
+        body {
+            overflow-x: hidden;
+            line-height: 1.6;
+            background: radial-gradient(circle at 50% 0%, #161822 0%, #0a0b0d 70%);
+            min-height: 100vh;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #282a35; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3e4252; }
+
+        /* 1. 开屏区 (Hero) */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 0 20px;
+            user-select: none;
+            transition: opacity 0.35s ease;
+        }
+        .hero-title-wrap {
+            opacity: 0;
+            transform: scale(0.96) translateY(20px);
+            animation: heroFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+        .hero-title {
+            font-size: clamp(2.8rem, 7.5vw, 6rem);
+            font-weight: 800;
+            letter-spacing: 0.28em;
+            margin-right: -0.28em;
+            background: linear-gradient(180deg, #ffffff 30%, #8e92a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+            line-height: 1.1;
+        }
+        @keyframes heroFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s, transform 0.3s;
+            animation: floatUpDown 2.2s infinite ease-in-out;
+        }
+        .scroll-indicator:hover {
+            opacity: 1;
+            transform: translateY(4px);
+        }
+        .scroll-indicator svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--text-secondary);
+        }
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* 2. 主入口菜单 (Portal Menu) */
+        #portal-section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+            transition: opacity 0.35s ease;
+        }
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .portal-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        .portal-card {
+            background: linear-gradient(145deg, var(--bg-surface) 0%, #151720 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 48px 36px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 320px;
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .portal-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .portal-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+        .portal-card:hover::after {
+            opacity: 1;
+        }
+        .portal-tag {
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .portal-card:nth-child(2) .portal-tag {
+            color: var(--accent-gold);
+        }
+        .portal-title {
+            font-size: clamp(1.8rem, 3vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+        .portal-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .portal-action {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #fff;
+            transition: gap 0.3s;
+        }
+        .portal-card:hover .portal-action {
+            gap: 16px;
+            color: var(--accent-blue);
+        }
+        .portal-card:nth-child(2):hover .portal-action {
+            color: var(--accent-gold);
+        }
+        .portal-action svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2.5;
+            transition: transform 0.3s;
+        }
+        .portal-card:hover .portal-action svg {
+            transform: translateX(4px);
+        }
+
+        /* 3. 板块内容容器 (Content Panels) */
+        .content-panel {
+            display: none;
+            opacity: 0;
+            min-height: 100vh;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 80px 24px 100px;
+            position: relative;
+            transition: opacity 0.4s ease;
+        }
+        .content-panel.active {
+            display: block;
+            opacity: 1;
+        }
+        .panel-back-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 30px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .back-btn:hover {
+            color: #fff;
+            border-color: var(--border-hover);
+            background: #1c1e26;
+            transform: translateX(-3px);
+        }
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        .panel-header {
+            margin-bottom: 48px;
+        }
+        .panel-badge {
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .panel-title {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .panel-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            line-height: 1.7;
+        }
+
+        /* 3.1 思绪切片 (Articles Grid) */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .article-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 30px 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s, box-shadow 0.35s;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .article-tag {
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+        }
+        .article-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .article-title {
+            font-size: 1.18rem;
+            font-weight: 700;
+            line-height: 1.5;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .article-summary {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+        .article-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .article-read-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: gap 0.3s;
+        }
+        .article-card:hover .article-read-btn {
+            gap: 10px;
+            color: var(--accent-blue);
+        }
+        .article-read-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2;
+        }
+
+        /* 3.2 极简摄影器材 (Minimalist Gear) */
+        .gear-section {
+            margin-bottom: 60px;
+        }
+        .gear-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gear-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: border-color 0.3s ease;
+        }
+        .gear-card:hover {
+            border-color: var(--border-hover);
+        }
+        .gear-header {
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+        }
+        .gear-badge {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .gear-model {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        .gear-lenses {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .lens-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-elevated);
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .lens-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .lens-name {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #ececec;
+        }
+
+        /* 3.3 摄影画廊 (Gallery) */
+        .gallery-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .gallery-count-badge {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        @media (min-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+        }
+        .photo-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            aspect-ratio: 4 / 3;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
+        }
+        .photo-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+        }
+        .photo-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #191b22;
+            display: block;
+        }
+        .photo-card:hover .photo-thumb {
+            transform: scale(1.06);
+        }
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(10, 11, 13, 0.9) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .photo-card:hover .photo-overlay {
+            opacity: 1;
+        }
+        .photo-date-badge {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .photo-camera-badge {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .photo-camera-badge svg {
+            width: 12px;
+            height: 12px;
+            stroke: var(--text-muted);
+        }
+        .photo-zoom-hint {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.3s, transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .photo-card:hover .photo-zoom-hint {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .photo-zoom-hint svg {
+            width: 14px;
+            height: 14px;
+            stroke: #fff;
+        }
+
+        /* 4. 沉浸式 Lightbox 放大弹窗 */
+        #lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 2500;
+            background: rgba(8, 9, 11, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+            opacity: 0;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lb-container {
+            width: 100%;
+            max-width: 1440px;
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+            position: relative;
+        }
+        @media (max-width: 1024px) {
+            .lb-container {
+                flex-direction: column;
+                height: 92vh;
+                gap: 16px;
+                overflow-y: auto;
+            }
+        }
+        .lb-img-wrap {
+            flex: 1;
+            height: 100%;
+            max-height: 86vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+        }
+        .lb-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+            opacity: 1;
+            display: block;
+        }
+        .lb-exif-card {
+            width: 320px;
+            background: rgba(22, 24, 31, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-hover);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 1024px) {
+            .lb-exif-card {
+                width: 100%;
+                max-width: 600px;
+                padding: 20px;
+                gap: 12px;
+            }
+        }
+        .exif-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+        .exif-tag {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .exif-date {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .exif-filename {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .exif-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .exif-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+        }
+        .exif-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+        .exif-val {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #efefef;
+        }
+        .exif-device-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+        }
+        .exif-device-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .exif-device-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 2px;
+        }
+        .lb-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s;
+            z-index: 2600;
+        }
+        .lb-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.08);
+        }
+        .lb-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+        }
+        .lb-close { top: 24px; right: 24px; }
+        .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        .lb-prev:hover { transform: translateY(-50%) scale(1.08); }
+        .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+        .lb-next:hover { transform: translateY(-50%) scale(1.08); }
+
+        /* 5. 极简页脚与纯图标点赞/踩 */
+        #master-footer {
+            padding: 70px 24px 40px;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            transition: opacity 0.35s ease;
+        }
+        .pure-vote-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 28px;
+            margin-bottom: 28px;
+            user-select: none;
+        }
+        .pure-vote-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 30px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pure-vote-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.8;
+            stroke: currentColor;
+            fill: none;
+            transition: transform 0.25s;
+        }
+        .pure-vote-btn:hover {
+            border-color: #fff;
+            color: #fff;
+            background: #1e2028;
+            transform: translateY(-2px);
+        }
+        .pure-vote-btn:hover svg {
+            transform: scale(1.15);
+        }
+        .pure-vote-count {
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 开屏区 (Hero) -->
+    <section id="hero">
+        <div class="hero-title-wrap">
+            <h1 class="hero-title">LOGIC STUDIO</h1>
+        </div>
+        <div class="scroll-indicator" onclick="scrollToPortal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 2. 主入口菜单 (Portal Cards) -->
+    <div id="portal-section">
+        <div class="portal-grid">
+            <!-- 思绪切片入口 -->
+            <div class="portal-card" onclick="openPanel('articles-panel')">
+                <div>
+                    <div class="portal-tag">ESSAYS · 公众号随笔</div>
+                    <h2 class="portal-title">思绪切片</h2>
+                    <p class="portal-desc">沉淀思维脉络，收录精选公众号深度文章与思考。</p>
+                </div>
+                <div class="portal-action">
+                    <span>ENTER / 进入板块</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </div>
+
+            <!-- 定格瞬间入口 -->
+            <div class="portal-card" onclick="openPanel('moments-panel')">
+                <div>
+                    <div class="portal-tag">PHOTOGRAPHY · 摄影档案</div>
+                    <h2 class="portal-title">定格瞬间</h2>
+                    <p class="portal-desc">快门锁住光影，浏览作品画廊与拍摄器材参数。</p>
+                </div>
+                <div class="portal-action">
+                    <span>ENTER / 进入板块</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 思绪切片内容面板 (Articles Panel) -->
+    <div id="articles-panel" class="content-panel">
+        <div class="panel-back-bar">
+            <div class="back-btn" onclick="closePanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>返回主页</span>
+            </div>
+        </div>
+        <div class="panel-header">
+            <div class="panel-badge">ESSAYS & DIALOGUES</div>
+            <h2 class="panel-title">思绪切片</h2>
+            <p class="panel-desc">文字沉淀思考。点击卡片直接在新标签页打开微信公众号阅读原文。</p>
+        </div>
+        <div class="articles-grid" id="articles-container"></div>
+    </div>
+
+    <!-- 4. 定格瞬间内容面板 (Moments & Gallery Panel) -->
+    <div id="moments-panel" class="content-panel">
+        <div class="panel-back-bar">
+            <div class="back-btn" onclick="closePanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>返回主页</span>
+            </div>
+        </div>
+        <div class="panel-header">
+            <div class="panel-badge">FRAMED MOMENTS</div>
+            <h2 class="panel-title">定格瞬间</h2>
+            <p class="panel-desc">点击任意照片即可无损放大，并查看完整 EXIF 拍摄参数仪表盘。</p>
+        </div>
+
+        <!-- 极简器材展示 -->
+        <div class="gear-section">
+            <div class="gear-grid" id="gear-container"></div>
+        </div>
+
+        <!-- 相册画廊 -->
+        <div class="gallery-header-row">
+            <span class="gallery-count-badge" id="gallery-count-text">ARCHIVES / 0 FRAMES</span>
+        </div>
+        <div class="gallery-grid" id="gallery-container"></div>
+    </div>
+
+    <!-- 5. 沉浸式照片放大 Lightbox -->
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="照片放大查看器">
+        <button class="lb-btn lb-close" id="lb-close-btn" title="关闭 (Esc)">
+            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <button class="lb-btn lb-prev" id="lb-prev-btn" title="上一张 (←)">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="lb-btn lb-next" id="lb-next-btn" title="下一张 (→)">
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+
+        <div class="lb-container" id="lb-content">
+            <div class="lb-img-wrap">
+                <img id="lb-img" class="lb-img" alt="Enlarged Photo">
+            </div>
+            
+            <!-- EXIF HUD 卡片 -->
+            <div class="lb-exif-card">
+                <div class="exif-header">
+                    <div class="exif-tag">EXIF METADATA</div>
+                    <div class="exif-date" id="exif-date">--</div>
+                    <div class="exif-filename" id="exif-filename">--</div>
+                </div>
+
+                <div class="exif-device-block">
+                    <div class="exif-device-title">Camera / 相机机身</div>
+                    <div class="exif-device-name" id="exif-camera">暂无信息</div>
+                </div>
+
+                <div class="exif-device-block">
+                    <div class="exif-device-title">Lens / 搭配镜头</div>
+                    <div class="exif-device-name" id="exif-lens">暂无信息</div>
+                </div>
+
+                <div class="exif-grid">
+                    <div class="exif-item">
+                        <div class="exif-label">Aperture / 光圈</div>
+                        <div class="exif-val" id="exif-aperture">暂无信息</div>
+                    </div>
+                    <div class="exif-item">
+                        <div class="exif-label">Shutter / 快门</div>
+                        <div class="exif-val" id="exif-shutter">暂无信息</div>
+                    </div>
+                    <div class="exif-item">
+                        <div class="exif-label">ISO / 感光度</div>
+                        <div class="exif-val" id="exif-iso">暂无信息</div>
+                    </div>
+                    <div class="exif-item">
+                        <div class="exif-label">Focal / 焦距</div>
+                        <div class="exif-val" id="exif-focal">暂无信息</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 纯图标点赞/踩与页脚 -->
+    <footer id="master-footer">
+        <div class="pure-vote-row">
+            <div class="pure-vote-btn" onclick="handlePureVote('up')" title="赞">
+                <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                <span class="pure-vote-count" id="count-up">0</span>
+            </div>
+            <div class="pure-vote-btn" onclick="handlePureVote('down')" title="不赞">
+                <svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
+                <span class="pure-vote-count" id="count-down">0</span>
+            </div>
+        </div>
+        <p class="footer-copyright">LOGIC STUDIO &copy; 2026</p>
+    </footer>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        let currentPhotoIndex = 0;
+        let lastScrollY = 0;
+
+        function scrollToPortal() {
+            if (typeof gsap !== 'undefined') {
+                gsap.to(window, { scrollTo: "#portal-section", duration: 0.8, ease: "power2.out" });
+            } else {
+                document.getElementById('portal-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 渲染微信公众号文章 (思绪切片)
+        function renderArticles() {
+            const container = document.getElementById('articles-container');
+            if (!container || typeof articleData === 'undefined') return;
+
+            container.innerHTML = articleData.map(item => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="article-card">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-tag">${item.tag || '深度阅读'}</span>
+                            <span class="article-date">${item.date || ''}</span>
+                        </div>
+                        <h3 class="article-title">${item.title}</h3>
+                        <p class="article-summary">${item.summary || '点击阅读全文...'}</p>
+                    </div>
+                    <div class="article-footer">
+                        <span>微信公众号</span>
+                        <div class="article-read-btn">
+                            <span>阅读原文</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // 渲染极简拍摄器材 (Minimalist Equipment)
+        function renderGear() {
+            const container = document.getElementById('gear-container');
+            if (!container || typeof gearData === 'undefined') return;
+
+            container.innerHTML = gearData.map(gear => `
+                <div class="gear-card">
+                    <div class="gear-header">
+                        <span class="gear-badge">CAMERA</span>
+                        <h3 class="gear-model">${gear.camera}</h3>
+                    </div>
+                    <div class="gear-lenses">
+                        ${gear.lenses.map(lensName => `
+                            <div class="lens-row">
+                                <span class="lens-tag">LENS</span>
+                                <span class="lens-name">${lensName}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染摄影画廊 (Gallery)
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            const countText = document.getElementById('gallery-count-text');
+            if (!container || typeof galleryData === 'undefined') return;
+
+            countText.innerText = `ARCHIVES / ${galleryData.length} FRAMES`;
+
+            container.innerHTML = galleryData.map((photo, idx) => `
+                <div class="photo-card" onclick="openLightbox(${idx})">
+                    <img src="${photo.thumb}" onerror="this.onerror=null; this.src='${photo.web}';" class="photo-thumb" alt="Photo ${idx + 1}">
+                    <div class="photo-zoom-hint">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                    <div class="photo-overlay">
+                        <div class="photo-date-badge">${photo.date || '近期拍摄'}</div>
+                        <div class="photo-camera-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="13" r="4"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+                            ${photo.exif.camera || 'LOGIC STUDIO'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 打开内容板块 (思绪切片 / 定格瞬间)
+        function openPanel(panelId) {
+            lastScrollY = window.scrollY;
+
+            // 隐藏首页主菜单
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('portal-section').style.display = 'none';
+            document.getElementById('master-footer').style.display = 'none';
+
+            // 显示并激活目标面板
+            document.querySelectorAll('.content-panel').forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
+
+            const targetPanel = document.getElementById(panelId);
+            if (targetPanel) {
+                targetPanel.style.display = 'block';
+                // 强制重绘以触发 transition
+                void targetPanel.offsetWidth;
+                targetPanel.classList.add('active');
+
+                window.scrollTo(0, 0);
+
+                if (panelId === 'articles-panel') renderArticles();
+                if (panelId === 'moments-panel') {
+                    renderGear();
+                    renderGallery();
+                }
+            }
+        }
+
+        // 关闭内容板块，返回主导航
+        function closePanel() {
+            document.querySelectorAll('.content-panel').forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
+
+            document.getElementById('hero').style.display = 'flex';
+            document.getElementById('portal-section').style.display = 'flex';
+            document.getElementById('master-footer').style.display = 'block';
+
+            window.scrollTo({ top: lastScrollY, behavior: 'auto' });
+        }
+
+        // Lightbox 弹窗控制与 EXIF
+        function openLightbox(index) {
+            if (index < 0 || index >= galleryData.length) return;
+            currentPhotoIndex = index;
+
+            const photo = galleryData[index];
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lb-img');
+
+            document.getElementById('exif-date').innerText = photo.date || '暂无信息';
+            document.getElementById('exif-filename').innerText = photo.fileName || '';
+            document.getElementById('exif-camera').innerText = photo.exif.camera || '暂无信息';
+            document.getElementById('exif-lens').innerText = photo.exif.lens || '暂无信息';
+            document.getElementById('exif-aperture').innerText = photo.exif.aperture || '暂无信息';
+            document.getElementById('exif-shutter').innerText = photo.exif.shutter || '暂无信息';
+            document.getElementById('exif-iso').innerText = photo.exif.iso || '暂无信息';
+            document.getElementById('exif-focal').innerText = photo.exif.focalLength || '暂无信息';
+
+            lbImg.src = photo.web;
+            lbImg.onerror = function() {
+                this.src = photo.thumb;
+            };
+
+            lb.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function nextPhoto() {
+            currentPhotoIndex = (currentPhotoIndex + 1) % galleryData.length;
+            openLightbox(currentPhotoIndex);
+        }
+
+        function prevPhoto() {
+            currentPhotoIndex = (currentPhotoIndex - 1 + galleryData.length) % galleryData.length;
+            openLightbox(currentPhotoIndex);
+        }
+
+        // 纯图标点赞/踩
+        function initVotes() {
+            ['up', 'down'].forEach(type => {
+                const count = localStorage.getItem('pure_vote_' + type) || '0';
+                document.getElementById('count-' + type).innerText = count;
+            });
+        }
+
+        function handlePureVote(type) {
+            const current = parseInt(localStorage.getItem('pure_vote_' + type) || '0', 10) + 1;
+            localStorage.setItem('pure_vote_' + type, current);
+            document.getElementById('count-' + type).innerText = current;
+        }
+
+        // 键盘事件
+        document.addEventListener('keydown', (e) => {
+            const lb = document.getElementById('lightbox');
+            if (lb.classList.contains('active')) {
+                if (e.key === 'Escape') closeLightbox();
+                else if (e.key === 'ArrowRight') nextPhoto();
+                else if (e.key === 'ArrowLeft') prevPhoto();
+            }
+        });
+
+        document.getElementById('lb-close-btn').addEventListener('click', closeLightbox);
+        document.getElementById('lb-next-btn').addEventListener('click', nextPhoto);
+        document.getElementById('lb-prev-btn').addEventListener('click', prevPhoto);
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox' || e.target.id === 'lb-content' || e.target.classList.contains('lb-img-wrap')) {
+                closeLightbox();
+            }
+        });
+
+        // 初始化所有数据与渲染
+        window.addEventListener('DOMContentLoaded', () => {
+            renderArticles();
+            renderGear();
+            renderGallery();
+            initVotes();
+        });
+    </script>
+</body>
+</html>
