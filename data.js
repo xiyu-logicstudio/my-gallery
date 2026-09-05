@@ -1,9 +1,6 @@
-// ==========================================
+﻿// ==========================================
 // 1. 公众号文章板块：思绪切片 (Mind Slices)
-// 【教程：如何添加新文章】
-// 复制 `{ ... },` 这一整块，放到 `articleData` 的最前面或最后面。
-// 将里面的 title（标题）、date（日期）、summary（摘要）、url（文章链接）和 tag（标签）修改为你新的内容。
-// 注意每篇文章的大括号 {} 之间必须要有一个英文逗号 `,` 分隔。
+// 如需添加新文章，只需复制一份下方对象，填入你的文章标题、链接与摘要即可：
 // ==========================================
 const articleData = [
   {
@@ -48,15 +45,67 @@ const gearData = [
   }
 ];
 
-// ==========================================
-// 4. 摄影画廊数据 (Gallery)
-// 【教程：如何添加新照片】
-// 1. 将原图放到 `web/` 文件夹，将缩小后的缩略图放到 `thumbs/` 文件夹。
-// 2. 复制下方的一个 `{ ... },` 块到 `galleryData` 的最前面。
-// 3. 修改 `thumb` 和 `web` 的图片路径。
-// 4. 在 `exif` 里面填写你的相机 (camera) 和 镜头 (lens)，如果不知道可以写 'N/A'。
-// ==========================================
 const galleryData = [
+  {
+    "id": "20260904_7",
+    "fileName": "20260904_7.jpg",
+    "thumb": "thumbs/20260904_7.jpg",
+    "web": "web/20260904_7.jpg",
+    "original": "xiyu/20260904_7.jpg",
+    "width": 7790,
+    "height": 5017,
+    "aspectRatio": 1.5527,
+    "date": "2026 / 09 / 02",
+    "exif": {
+      "camera": "Sony A7R III A (ILCE-7RM3A)",
+      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
+      "aperture": "f/2.8",
+      "shutter": "1/125s",
+      "iso": "ISO 100",
+      "focalLength": "75mm",
+      "rawDate": "2026:09:02 15:59:42"
+    }
+  },
+  {
+    "id": "20260904_5",
+    "fileName": "20260904_5.jpg",
+    "thumb": "thumbs/20260904_5.jpg",
+    "web": "web/20260904_5.jpg",
+    "original": "xiyu/20260904_5.jpg",
+    "width": 5304,
+    "height": 5304,
+    "aspectRatio": 1,
+    "date": "2026 / 09 / 02",
+    "exif": {
+      "camera": "Sony A7R III A (ILCE-7RM3A)",
+      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
+      "aperture": "f/2.8",
+      "shutter": "1/125s",
+      "iso": "ISO 2500",
+      "focalLength": "28mm",
+      "rawDate": "2026:09:02 14:10:54"
+    }
+  },
+  {
+    "id": "20260904_1",
+    "fileName": "20260904_1.jpg",
+    "thumb": "thumbs/20260904_1.jpg",
+    "web": "web/20260904_1.jpg",
+    "original": "xiyu/20260904_1.jpg",
+    "width": 7952,
+    "height": 4951,
+    "aspectRatio": 1.6061,
+    "date": "2026 / 09 / 02",
+    "exif": {
+      "camera": "Sony A7R III A (ILCE-7RM3A)",
+      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
+      "aperture": "f/2.8",
+      "shutter": "1/125s",
+      "iso": "ISO 100",
+      "focalLength": "28mm",
+      "rawDate": "2026:09:02 14:26:48"
+    }
+  },
   {
     "id": "20260815_4",
     "fileName": "20260815_4.jpg",
@@ -163,18 +212,18 @@ const galleryData = [
     "thumb": "thumbs/20260625.jpg",
     "web": "web/20260625.jpg",
     "original": "xiyu/20260625.jpg",
-    "width": 7952,
-    "height": 5304,
-    "aspectRatio": 1.4992,
+    "width": 2160,
+    "height": 1441,
+    "aspectRatio": 1.499,
     "date": "2026 / 06 / 25",
     "exif": {
-      "camera": "Sony A7R III A (ILCE-7RM3A)",
-      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
-      "aperture": "f/4",
-      "shutter": "1/100s",
-      "iso": "ISO 2500",
-      "focalLength": "28mm",
-      "rawDate": "2026:06:25 19:32:06"
+      "camera": "暂无信息",
+      "lens": "暂无信息",
+      "aperture": "暂无信息",
+      "shutter": "暂无信息",
+      "iso": "暂无信息",
+      "focalLength": "暂无信息",
+      "rawDate": ""
     }
   },
   {
