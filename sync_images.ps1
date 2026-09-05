@@ -1,8 +1,27 @@
-<#
+﻿<#
 =============================================================================
   XIYU LOGIC STUDIO - 自动化图片处理、EXIF 提取与数据同步脚本
 =============================================================================
 #>
+
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+# 1. 自动寻找 Git 路径
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    $candidatePaths = @(
+        "D:\Git\cmd",
+        "C:\Program Files\Git\cmd",
+        "$env:LOCALAPPDATA\GitHubDesktop\app-*\resources\app\git\cmd"
+    )
+    foreach ($cp in $candidatePaths) {
+        $found = Resolve-Path $cp -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($found -and (Test-Path (Join-Path $found "git.exe"))) {
+            $env:PATH = "$found;$env:PATH"
+            break
+        }
+    }
+}
 
 Add-Type -AssemblyName System.Drawing
 
@@ -64,6 +83,18 @@ function Resize-ImageFile {
     }
 
     $srcImage = [System.Drawing.Image]::FromFile($sourcePath)
+
+    # 处理相机 EXIF 旋转方向 (Orientation)
+    foreach ($p in $srcImage.PropertyItems) {
+        if ($p.Id -eq 0x0112) {
+            $orient = [BitConverter]::ToUInt16($p.Value, 0)
+            if ($orient -eq 6) { $srcImage.RotateFlip([System.Drawing.RotateFlipType]::Rotate90FlipNone) }
+            elseif ($orient -eq 8) { $srcImage.RotateFlip([System.Drawing.RotateFlipType]::Rotate270FlipNone) }
+            elseif ($orient -eq 3) { $srcImage.RotateFlip([System.Drawing.RotateFlipType]::Rotate180FlipNone) }
+            break
+        }
+    }
+
     $origWidth  = $srcImage.Width
     $origHeight = $srcImage.Height
 
@@ -116,7 +147,7 @@ $files = Get-ChildItem -Path $sourceDir -File | Where-Object { $imageExtensions 
 if ($files.Count -eq 0) {
     Write-Host "警告: 在 xiyu 文件夹中未发现图片！" -ForegroundColor Yellow
 } else {
-    Write-Host "共找到 $($files.Count) 张照片，开始优化与提取元数据..." -ForegroundColor Green
+    Write-Host "共找到 $($files.Count) 张照片，开始处理与提取参数..." -ForegroundColor Green
 }
 
 $galleryItems = @()
@@ -298,7 +329,37 @@ $galleryDataBlock = "const galleryData = [`n" + ($galleryItems -join ",`n") + "`
 
 $finalJs = "$articleDataBlock`n`n$gearDataBlock`n`n$galleryDataBlock`n`n$logDataBlock`n"
 
-[System.IO.File]::WriteAllText($dataFile, $finalJs, [System.Text.UTF8Encoding]::new($false))
-Write-Host "`n✓ 成功生成/更新 data.js！" -ForegroundColor Green
-Write-Host "✓ 缩略图已存入 thumbs/，高清预览已存入 web/！" -ForegroundColor Green
+[System.IO.File]::WriteAllText($dataFile, $finalJs, [System.Text.UTF8Encoding]::new($true))
+Write-Host "`n[1/2] 成功生成并更新 data.js（无乱码 UTF-8）" -ForegroundColor Green
+Write-Host "[1/2] 缩略图已同步至 thumbs/，2K预览已同步至 web/" -ForegroundColor Green
+
+# 2. Git 自动提交与推送到 GitHub
+Write-Host "`n=====================================================" -ForegroundColor Cyan
+Write-Host "  [2/2] 正在同步到 GitHub 与 Cloudflare..." -ForegroundColor Cyan
+Write-Host "=====================================================" -ForegroundColor Cyan
+
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    git add thumbs/ web/ data.js xiyu/
+    $gitStatus = git status --porcelain
+    if ($gitStatus) {
+        Write-Host "检测到数据或图片有更新，正在提交并推送..." -ForegroundColor Yellow
+        git commit -m "Auto update: photos and metadata sync"
+        $pushOutput = git push origin main 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "`n✓ 恭喜！全部推送成功！" -ForegroundColor Green
+            Write-Host "✓ Cloudflare Pages 正在自动拉取并部署上线（预计 10~30 秒内生效）。" -ForegroundColor Green
+            Write-Host "✓ 访问网站: https://xiyu-logicstudio.site" -ForegroundColor Cyan
+        } else {
+            Write-Host "`n⚠ 推送遇到问题，输出详情如下:" -ForegroundColor Red
+            Write-Host "$pushOutput" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "✓ 当前文件无新变动，已是最新状态，无需重复推送。" -ForegroundColor Green
+    }
+} else {
+    Write-Host "⚠ 系统未找到 Git 命令，已跳过云端推送。本地图片与数据已全部处理完毕。" -ForegroundColor Yellow
+}
+
+Write-Host "`n=====================================================" -ForegroundColor Cyan
+Write-Host "  全部流程执行完毕！" -ForegroundColor Cyan
 Write-Host "=====================================================`n" -ForegroundColor Cyan
