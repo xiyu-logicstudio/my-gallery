@@ -259,10 +259,10 @@ const galleryData = [
     "exif": {
       "camera": "Samsung NX2000",
       "lens": "Super Takumar 55mm f/1.8",
-      "aperture": "暂无信息",
+      "aperture": "f/2",
       "shutter": "1/400s",
       "iso": "ISO 100",
-      "focalLength": "暂无信息",
+      "focalLength": "55mm",
       "rawDate": "2025:11:22 11:31:31"
     }
   },
