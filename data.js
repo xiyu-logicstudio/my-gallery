@@ -199,10 +199,10 @@ const galleryData = [
     "exif": {
       "camera": "Samsung NX2000",
       "lens": "Super Takumar 55mm f/1.8",
-      "aperture": "暂无信息",
+      "aperture": "f/2",
       "shutter": "1/200s",
       "iso": "ISO 160",
-      "focalLength": "暂无信息",
+      "focalLength": "55mm",
       "rawDate": "2026:01:31 11:40:21"
     }
   },
@@ -219,10 +219,10 @@ const galleryData = [
     "exif": {
       "camera": "Samsung NX2000",
       "lens": "Super Takumar 55mm f/1.8",
-      "aperture": "暂无信息",
+      "aperture": "f/2",
       "shutter": "1/400s",
       "iso": "ISO 125",
-      "focalLength": "暂无信息",
+      "focalLength": "55mm",
       "rawDate": "2026:01:31 10:53:53"
     }
   },
@@ -277,33 +277,13 @@ const galleryData = [
     "aspectRatio": 1.5,
     "date": "2025 / 11 / 09",
     "exif": {
-      "camera": "Sony A7R III A",
-      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
-      "aperture": "f/2.8",
-      "shutter": "1/80s",
-      "iso": "ISO 400",
-      "focalLength": "28mm",
-      "rawDate": "2025:11:09 15:23:10"
-    }
-  },
-  {
-    "id": "20250831-1",
-    "fileName": "20250831-1.jpg",
-    "thumb": "thumbs/20250831-1.jpg",
-    "web": "web/20250831-1.jpg",
-    "original": "xiyu/20250831-1.jpg",
-    "width": 3263,
-    "height": 2263,
-    "aspectRatio": 1.4419,
-    "date": "2025 / 08 / 31",
-    "exif": {
       "camera": "Samsung NX2000",
       "lens": "Super Takumar 55mm f/1.8",
-      "aperture": "暂无信息",
-      "shutter": "1/800s",
-      "iso": "ISO 100",
-      "focalLength": "暂无信息",
-      "rawDate": "2025:08:31 15:24:19"
+      "aperture": "f/1.8",
+      "shutter": "1/80s",
+      "iso": "ISO 400",
+      "focalLength": "55mm",
+      "rawDate": "2025:11:09 15:23:10"
     }
   }
 ];
