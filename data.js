@@ -317,12 +317,12 @@ const galleryData = [
     "aspectRatio": 1.5,
     "date": "2025 / 11 / 09",
     "exif": {
-      "camera": "暂无信息",
-      "lens": "暂无信息",
-      "aperture": "暂无信息",
+      "camera": "Sony A7R III A",
+      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
+      "aperture": "f/2.8",
       "shutter": "1/80s",
       "iso": "ISO 400",
-      "focalLength": "暂无信息",
+      "focalLength": "28mm",
       "rawDate": "2025:11:09 15:23:10"
     }
   },
