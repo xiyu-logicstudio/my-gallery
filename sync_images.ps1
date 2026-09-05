@@ -25,25 +25,13 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 
 Add-Type -AssemblyName System.Drawing
 
-$sourceDir      = Join-Path $PSScriptRoot "xiyu"
-$thumbsDir      = Join-Path $PSScriptRoot "thumbs"
-$webDir         = Join-Path $PSScriptRoot "web"
-$dataFile       = Join-Path $PSScriptRoot "data.js"
-$customExifFile = Join-Path $PSScriptRoot "custom_exif.json"
+$sourceDir = Join-Path $PSScriptRoot "xiyu"
+$thumbsDir = Join-Path $PSScriptRoot "thumbs"
+$webDir    = Join-Path $PSScriptRoot "web"
+$dataFile  = Join-Path $PSScriptRoot "data.js"
 
 if (-not (Test-Path $thumbsDir)) { [System.IO.Directory]::CreateDirectory($thumbsDir) | Out-Null }
 if (-not (Test-Path $webDir))    { [System.IO.Directory]::CreateDirectory($webDir) | Out-Null }
-
-# 读取手动补全/覆盖的 EXIF 配置 (若存在)
-$customExifMap = $null
-if (Test-Path $customExifFile) {
-    try {
-        $jsonContent = Get-Content $customExifFile -Raw -Encoding UTF8
-        $customExifMap = $jsonContent | ConvertFrom-Json
-    } catch {
-        Write-Host "提示: custom_exif.json 格式解析有误，将使用照片默认信息。" -ForegroundColor Yellow
-    }
-}
 
 function Get-ExifValue($prop) {
     if ($null -eq $prop) { return $null }
@@ -258,23 +246,17 @@ foreach ($file in $files) {
         }
     }
 
-    # 2. 手动补全 / 覆盖机制：如果 custom_exif.json 里对该照片有指定参数，优先覆盖
-    if ($customExifMap) {
-        $customItem = $null
-        if ($customExifMap.PSObject.Properties[$fileName]) {
-            $customItem = $customExifMap.$fileName
-        } elseif ($customExifMap.PSObject.Properties[$baseName]) {
-            $customItem = $customExifMap.$baseName
-        }
-        if ($customItem) {
-            if ($customItem.camera)      { $cameraVal    = $customItem.camera }
-            if ($customItem.lens)        { $lensVal      = $customItem.lens }
-            if ($customItem.aperture)    { $apertureStr  = $customItem.aperture }
-            if ($customItem.shutter)     { $shutterVal   = $customItem.shutter }
-            if ($customItem.iso)         { $isoStr       = $customItem.iso }
-            if ($customItem.focalLength) { $focalStr     = $customItem.focalLength }
-            if ($customItem.date)        { $displayDate  = $customItem.date }
-        }
+    # 针对 NX2000 转接手动镜头的特定历史照片固定参数 (0131 两张光圈 f/2 焦距 55mm，1109 光圈 f/1.8 焦距 55mm，相机 Samsung NX2000)
+    if ($baseName -eq "20251109") {
+        $cameraVal   = "Samsung NX2000"
+        $lensVal     = "Super Takumar 55mm f/1.8"
+        $apertureStr = "f/1.8"
+        $focalStr    = "55mm"
+    } elseif ($baseName -eq "20260131-1" -or $baseName -eq "20260131-9") {
+        $cameraVal   = "Samsung NX2000"
+        $lensVal     = "Super Takumar 55mm f/1.8"
+        $apertureStr = "f/2"
+        $focalStr    = "55mm"
     }
 
     $aspectRatio = [math]::Round($origW / [math]::Max($origH, 1), 4)
@@ -388,7 +370,7 @@ Write-Host "  [2/2] 正在同步到 GitHub 与 Cloudflare..." -ForegroundColor C
 Write-Host "=====================================================" -ForegroundColor Cyan
 
 if (Get-Command git -ErrorAction SilentlyContinue) {
-    git add thumbs/ web/ data.js xiyu/ custom_exif.json
+    git add thumbs/ web/ data.js xiyu/
     $gitStatus = git status --porcelain
     if ($gitStatus) {
         Write-Host "检测到数据或图片有更新，正在提交并推送..." -ForegroundColor Yellow
