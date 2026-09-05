@@ -7,7 +7,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
-# 1. 自动寻找 Git 路径
+# 1. 自动检测并配置 Git 路径
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     $candidatePaths = @(
         "D:\Git\cmd",
@@ -25,13 +25,25 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 
 Add-Type -AssemblyName System.Drawing
 
-$sourceDir = Join-Path $PSScriptRoot "xiyu"
-$thumbsDir = Join-Path $PSScriptRoot "thumbs"
-$webDir    = Join-Path $PSScriptRoot "web"
-$dataFile  = Join-Path $PSScriptRoot "data.js"
+$sourceDir      = Join-Path $PSScriptRoot "xiyu"
+$thumbsDir      = Join-Path $PSScriptRoot "thumbs"
+$webDir         = Join-Path $PSScriptRoot "web"
+$dataFile       = Join-Path $PSScriptRoot "data.js"
+$customExifFile = Join-Path $PSScriptRoot "custom_exif.json"
 
 if (-not (Test-Path $thumbsDir)) { [System.IO.Directory]::CreateDirectory($thumbsDir) | Out-Null }
 if (-not (Test-Path $webDir))    { [System.IO.Directory]::CreateDirectory($webDir) | Out-Null }
+
+# 读取手动补全/覆盖的 EXIF 配置 (若存在)
+$customExifMap = $null
+if (Test-Path $customExifFile) {
+    try {
+        $jsonContent = Get-Content $customExifFile -Raw -Encoding UTF8
+        $customExifMap = $jsonContent | ConvertFrom-Json
+    } catch {
+        Write-Host "提示: custom_exif.json 格式解析有误，将使用照片默认信息。" -ForegroundColor Yellow
+    }
+}
 
 function Get-ExifValue($prop) {
     if ($null -eq $prop) { return $null }
@@ -144,6 +156,24 @@ Write-Host "=====================================================" -ForegroundCo
 $imageExtensions = @('.jpg', '.jpeg', '.png', '.webp', '.JPG', '.JPEG', '.PNG', '.WEBP')
 $files = Get-ChildItem -Path $sourceDir -File | Where-Object { $imageExtensions -contains $_.Extension } | Sort-Object Name -Descending
 
+# 1. 自动清理机制：如果从 xiyu/ 删除了某照片，自动同步清理 thumbs/ 与 web/ 的残留文件
+$validBaseNames = @($files | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_.Name) })
+$existingThumbs = Get-ChildItem -Path $thumbsDir -File
+$cleanedCount = 0
+foreach ($t in $existingThumbs) {
+    $tBase = [System.IO.Path]::GetFileNameWithoutExtension($t.Name)
+    if ($validBaseNames -notcontains $tBase) {
+        Remove-Item $t.FullName -Force -ErrorAction SilentlyContinue
+        $wPath = Join-Path $webDir $t.Name
+        if (Test-Path $wPath) { Remove-Item $wPath -Force -ErrorAction SilentlyContinue }
+        Write-Host "检测到已删除照片，已自动清理缓存: $($t.Name)" -ForegroundColor DarkGray
+        $cleanedCount++
+    }
+}
+if ($cleanedCount -gt 0) {
+    Write-Host "已清理 $cleanedCount 张已删除照片的缩略图缓存。" -ForegroundColor Green
+}
+
 if ($files.Count -eq 0) {
     Write-Host "警告: 在 xiyu 文件夹中未发现图片！" -ForegroundColor Yellow
 } else {
@@ -225,6 +255,25 @@ foreach ($file in $files) {
             $displayDate = "$($matches[1]) / $($matches[2]) / $($matches[3])"
         } else {
             $displayDate = "近期拍摄"
+        }
+    }
+
+    # 2. 手动补全 / 覆盖机制：如果 custom_exif.json 里对该照片有指定参数，优先覆盖
+    if ($customExifMap) {
+        $customItem = $null
+        if ($customExifMap.PSObject.Properties[$fileName]) {
+            $customItem = $customExifMap.$fileName
+        } elseif ($customExifMap.PSObject.Properties[$baseName]) {
+            $customItem = $customExifMap.$baseName
+        }
+        if ($customItem) {
+            if ($customItem.camera)      { $cameraVal    = $customItem.camera }
+            if ($customItem.lens)        { $lensVal      = $customItem.lens }
+            if ($customItem.aperture)    { $apertureStr  = $customItem.aperture }
+            if ($customItem.shutter)     { $shutterVal   = $customItem.shutter }
+            if ($customItem.iso)         { $isoStr       = $customItem.iso }
+            if ($customItem.focalLength) { $focalStr     = $customItem.focalLength }
+            if ($customItem.date)        { $displayDate  = $customItem.date }
         }
     }
 
@@ -333,13 +382,13 @@ $finalJs = "$articleDataBlock`n`n$gearDataBlock`n`n$galleryDataBlock`n`n$logData
 Write-Host "`n[1/2] 成功生成并更新 data.js（无乱码 UTF-8）" -ForegroundColor Green
 Write-Host "[1/2] 缩略图已同步至 thumbs/，2K预览已同步至 web/" -ForegroundColor Green
 
-# 2. Git 自动提交与推送到 GitHub
+# 3. Git 自动提交与推送到 GitHub
 Write-Host "`n=====================================================" -ForegroundColor Cyan
 Write-Host "  [2/2] 正在同步到 GitHub 与 Cloudflare..." -ForegroundColor Cyan
 Write-Host "=====================================================" -ForegroundColor Cyan
 
 if (Get-Command git -ErrorAction SilentlyContinue) {
-    git add thumbs/ web/ data.js xiyu/
+    git add thumbs/ web/ data.js xiyu/ custom_exif.json
     $gitStatus = git status --porcelain
     if ($gitStatus) {
         Write-Host "检测到数据或图片有更新，正在提交并推送..." -ForegroundColor Yellow
