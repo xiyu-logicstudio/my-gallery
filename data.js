@@ -127,26 +127,6 @@ const galleryData = [
     }
   },
   {
-    "id": "20260815",
-    "fileName": "20260815.jpg",
-    "thumb": "thumbs/20260815.jpg",
-    "web": "web/20260815.jpg",
-    "original": "xiyu/20260815.jpg",
-    "width": 5304,
-    "height": 7605,
-    "aspectRatio": 0.6974,
-    "date": "2026 / 08 / 15",
-    "exif": {
-      "camera": "Sony A7R III A (ILCE-7RM3A)",
-      "lens": "Tamron 28-75mm F/2.8 Di III VXD G2",
-      "aperture": "f/4",
-      "shutter": "1/200s",
-      "iso": "ISO 1600",
-      "focalLength": "28mm",
-      "rawDate": "2026:08:15 17:52:56"
-    }
-  },
-  {
     "id": "20260722_5",
     "fileName": "20260722_5.jpg",
     "thumb": "thumbs/20260722_5.jpg",
@@ -207,26 +187,6 @@ const galleryData = [
     }
   },
   {
-    "id": "20260625",
-    "fileName": "20260625.jpg",
-    "thumb": "thumbs/20260625.jpg",
-    "web": "web/20260625.jpg",
-    "original": "xiyu/20260625.jpg",
-    "width": 2160,
-    "height": 1441,
-    "aspectRatio": 1.499,
-    "date": "2026 / 06 / 25",
-    "exif": {
-      "camera": "暂无信息",
-      "lens": "暂无信息",
-      "aperture": "暂无信息",
-      "shutter": "暂无信息",
-      "iso": "暂无信息",
-      "focalLength": "暂无信息",
-      "rawDate": ""
-    }
-  },
-  {
     "id": "20260131-9",
     "fileName": "20260131-9.jpg",
     "thumb": "thumbs/20260131-9.jpg",
@@ -272,9 +232,9 @@ const galleryData = [
     "thumb": "thumbs/20260114-24.jpg",
     "web": "web/20260114-24.jpg",
     "original": "xiyu/20260114-24.jpg",
-    "width": 5902,
+    "width": 5723,
     "height": 3426,
-    "aspectRatio": 1.7227,
+    "aspectRatio": 1.6705,
     "date": "2026 / 01 / 14",
     "exif": {
       "camera": "Sony ZV-E10 II",
