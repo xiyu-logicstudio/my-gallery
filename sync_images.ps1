@@ -246,13 +246,13 @@ foreach ($file in $files) {
         }
     }
 
-    # 针对 NX2000 转接手动镜头的特定历史照片固定参数 (0131 两张光圈 f/2 焦距 55mm，1109 光圈 f/1.8 焦距 55mm，相机 Samsung NX2000)
+    # 针对 NX2000 转接手动镜头的特定历史照片固定参数 (0131 两张与 1122-7 光圈 f/2 焦距 55mm，1109 光圈 f/1.8 焦距 55mm，相机 Samsung NX2000)
     if ($baseName -eq "20251109") {
         $cameraVal   = "Samsung NX2000"
         $lensVal     = "Super Takumar 55mm f/1.8"
         $apertureStr = "f/1.8"
         $focalStr    = "55mm"
-    } elseif ($baseName -eq "20260131-1" -or $baseName -eq "20260131-9") {
+    } elseif ($baseName -eq "20260131-1" -or $baseName -eq "20260131-9" -or $baseName -eq "20251122-7") {
         $cameraVal   = "Samsung NX2000"
         $lensVal     = "Super Takumar 55mm f/1.8"
         $apertureStr = "f/2"
