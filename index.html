@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOGIC STUDIO</title>
     <meta name="description" content="LOGIC STUDIO - 思绪切片与定格瞬间。">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +18,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     
-    <!-- Data Source -->
-    <script src="data.js?v=2"></script>
+    <!-- Data Source (Always fetches freshest data, prevents browser cache) -->
+    <script>document.write('<script src="data.js?t=' + Date.now() + '"><\/script>');</script>
 
     <style>
         :root {
